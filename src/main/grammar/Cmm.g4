@@ -1,7 +1,7 @@
 grammar Cmm;
 
 type:
-    primitiveType | listType | fptrType
+    primitiveType | listType | fptrType | structType
     ;
 
 listType:
