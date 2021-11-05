@@ -6,6 +6,11 @@ statement:
     | assignStatement
     | whileStatement
     | doWhileStatement
+    | returnStatement
+    ;
+
+returnStatement:
+    RETURN expression?
     ;
 
 assignStatement:
