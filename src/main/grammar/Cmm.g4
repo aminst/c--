@@ -1,6 +1,12 @@
 grammar Cmm;
 
+cmm:
+    (struct | NEWLINE)* (function | NEWLINE)* main NEWLINE*
+    ;
 
+main:
+    MAIN LPAR RPAR statementScope
+    ;
 
 function:
     (type | VOID) IDENTIFIER LPAR callArgsDef RPAR statementScope
