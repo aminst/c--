@@ -4,6 +4,8 @@ grammar Cmm;
 statement:
     ifStatement
     | assignStatement
+    | whileStatement
+    | doWhileStatement
     ;
 
 assignStatement:
@@ -14,9 +16,21 @@ ifStatement:
     IF LPAR expression RPAR statementScope NEWLINE* (ELSE statementScope)?
     ;
 
+whileStatement:
+    WHILE LPAR expression RPAR statementScope
+    ;
+
+doWhileStatement:
+    DO doWhileStatementScope
+    ;
+
+doWhileStatementScope:
+    BEGIN NEWLINE+ (statement)+ NEWLINE* END WHILE LPAR expression RPAR
+    ;
+
 statementScope:
     BEGIN NEWLINE+ (statement)+ NEWLINE+ END
-    | NEWLINE+ statement
+    | NEWLINE+ statement NEWLINE*
     ;
 
 expression:
