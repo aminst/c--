@@ -1,5 +1,42 @@
 grammar Cmm;
 
+struct:
+    STRUCT IDENTIFIER structScope
+    ;
+
+structScope:
+    BEGIN
+    NEWLINE+
+    (varDeclaration | structFunc | NEWLINE)*
+    NEWLINE+
+    END
+    ;
+
+structFunc:
+    (type | VOID) IDENTIFIER LPAR callArgsDef RPAR BEGIN
+    NEWLINE
+    setGetFuncs
+    NEWLINE
+    END
+    ;
+
+setGetFuncs:
+    SET BEGIN
+        NEWLINE+
+        (varDeclaration | statement)*
+        NEWLINE*
+    END
+    NEWLINE+
+    GET BEGIN
+        NEWLINE+
+        (varDeclaration | statement)*
+        NEWLINE*
+    END
+    ;
+
+callArgsDef:
+    (type IDENTIFIER (COMMA type IDENTIFIER)*)?
+    ;
 
 statement:
     ifStatement
