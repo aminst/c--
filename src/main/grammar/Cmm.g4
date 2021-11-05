@@ -1,5 +1,11 @@
 grammar Cmm;
 
+
+
+function:
+    (type | VOID) IDENTIFIER LPAR callArgsDef RPAR statementScope
+    ;
+
 struct:
     STRUCT IDENTIFIER structScope
     ;
@@ -76,7 +82,7 @@ doWhileStatementScope:
     ;
 
 statementScope:
-    BEGIN NEWLINE+ (statement)+ NEWLINE+ END
+    BEGIN NEWLINE+ (statement | NEWLINE)+ NEWLINE+ END
     | NEWLINE+ statement NEWLINE*
     ;
 
