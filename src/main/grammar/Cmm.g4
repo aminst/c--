@@ -1,5 +1,25 @@
 grammar Cmm;
 
+type:
+    primitiveType | listType | fptrType
+    ;
+
+listType:
+    LIST SHARP (primitiveType | structType | listType)
+    ;
+
+primitiveType:
+    INT | BOOL
+    ;
+
+fptrType:
+    FPTR LT (type (COMMA type)* | VOID) ARROW (type | VOID) GT
+    ;
+
+structType:
+    STRUCT IDENTIFIER
+    ;
+
 STRUCT: 'struct';
 MAIN: 'main';
 INT: 'int';
@@ -47,8 +67,11 @@ AND: '&';
 OR: '|';
 TILDE: '~';
 
+ARROW: '->';
+
 IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
 NUM: '0' | [1-9][0-9]*;
 COMMENT: '/*' .*? '*/' -> skip;
 STR: '"' ~('"')* '"';
+NEWLINE: '\n';
 WS: [ \t\r] -> skip;
