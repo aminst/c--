@@ -1,5 +1,18 @@
 grammar Cmm;
 
+
+varDeclaration:
+    type (IDENTIFIER | IDENTIFIER ASSIGN value)  (COMMA (IDENTIFIER | IDENTIFIER ASSIGN value))*
+    ;
+
+value:
+    bool_value | NUM
+    ;
+
+bool_value:
+    TRUE | FALSE
+    ;
+
 type:
     primitiveType | listType | fptrType | structType
     ;
@@ -72,6 +85,5 @@ ARROW: '->';
 IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
 NUM: '0' | [1-9][0-9]*;
 COMMENT: '/*' .*? '*/' -> skip;
-STR: '"' ~('"')* '"';
 NEWLINE: '\n';
 WS: [ \t\r] -> skip;
