@@ -1,15 +1,78 @@
 grammar Cmm;
 
+expression:
+    assignExpression
+    ;
+
+assignExpression:
+    logicalOrExpression ASSIGN assignExpression
+    | logicalOrExpression
+    ;
+
+logicalOrExpression:
+    logicalAndExpression (OR logicalAndExpression)*
+    ;
+
+logicalAndExpression:
+    equalExpression (AND equalExpression)*
+    ;
+
+equalExpression:
+    comparisonExpression (EQUAL comparisonExpression)*
+    ;
+
+comparisonExpression:
+    plusMinusExpression ((GT | LT) plusMinusExpression)*
+    ;
+
+plusMinusExpression:
+    multiplyDivideExpression ((PLUS | MINUS) multiplyDivideExpression)*
+    ;
+
+multiplyDivideExpression:
+    unaryExpression ((AESTRIK | DIVIDE) unaryExpression)*
+    ;
+
+unaryExpression:
+    (MINUS | TILDE) unaryExpression
+    | retrieveListExpression
+    ;
+
+retrieveListExpression:
+    accessMemberExpression
+    (LBRACKET expression RBRACKET)*
+    ;
+
+accessMemberExpression:
+    parantheseExpression
+    (DOT IDENTIFIER)*
+    ;
+
+parantheseExpression:
+    LPAR expression RPAR
+    LPAR callArgs RPAR
+    | valueExpression
+    ;
+
+callArgs:
+    (expression (COMMA expression)*)?
+    ;
+
+valueExpression:
+    boolValue
+    | NUM
+    | IDENTIFIER
+    ;
 
 varDeclaration:
-    type (IDENTIFIER | IDENTIFIER ASSIGN value)  (COMMA (IDENTIFIER | IDENTIFIER ASSIGN value))*
+    type (IDENTIFIER (ASSIGN value)?) (COMMA (IDENTIFIER (ASSIGN value)?))*
     ;
 
 value:
-    bool_value | NUM
+    boolValue | NUM
     ;
 
-bool_value:
+boolValue:
     TRUE | FALSE
     ;
 
