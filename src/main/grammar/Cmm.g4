@@ -45,7 +45,7 @@ MINUS: '-';
 
 AND: '&';
 OR: '|';
-TIDLE: '~';
+TILDE: '~';
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
 NUM: '0' | [1-9][0-9]*;
