@@ -1,5 +1,24 @@
 grammar Cmm;
 
+
+statement:
+    ifStatement
+    | assignStatement
+    ;
+
+assignStatement:
+    logicalOrExpression ASSIGN expression
+    ;
+
+ifStatement:
+    IF LPAR expression RPAR statementScope
+    ;
+
+statementScope:
+    BEGIN NEWLINE (statement)* NEWLINE END
+    | NEWLINE statement
+    ;
+
 expression:
     assignExpression
     ;
