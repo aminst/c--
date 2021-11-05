@@ -7,6 +7,7 @@ statement:
     | whileStatement
     | doWhileStatement
     | returnStatement
+    | callStatement
     ;
 
 returnStatement:
@@ -19,6 +20,10 @@ assignStatement:
 
 ifStatement:
     IF LPAR expression RPAR statementScope NEWLINE* (ELSE statementScope)?
+    ;
+
+callStatement:
+    parantheseExpression
     ;
 
 whileStatement:
