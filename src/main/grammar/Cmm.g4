@@ -11,12 +11,12 @@ assignStatement:
     ;
 
 ifStatement:
-    IF LPAR expression RPAR statementScope
+    IF LPAR expression RPAR statementScope NEWLINE* (ELSE statementScope)?
     ;
 
 statementScope:
-    BEGIN NEWLINE (statement)* NEWLINE END
-    | NEWLINE statement
+    BEGIN NEWLINE+ (statement)+ NEWLINE+ END
+    | NEWLINE+ statement
     ;
 
 expression:
