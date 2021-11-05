@@ -49,9 +49,8 @@ accessMemberExpression:
     ;
 
 parantheseExpression:
-    LPAR expression RPAR
-    LPAR callArgs RPAR
-    | valueExpression
+    valueExpression (LPAR callArgs RPAR)*
+    | LPAR expression RPAR
     ;
 
 callArgs:
