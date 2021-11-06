@@ -58,6 +58,9 @@ statement:
     | doWhileStatement
     | returnStatement
     | callStatement
+    | displayStatement
+    | sizeStatement
+    | appendStatement
     ;
 
 returnStatement:
@@ -87,6 +90,18 @@ doWhileStatement:
 doWhileStatementScope:
     BEGIN NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*) END WHILE ((LPAR expression RPAR) | expression)
     ;
+
+displayStatement:
+    DISPLAY LPAR logicalOrExpression RPAR
+;
+
+sizeStatement:
+    SIZE LPAR IDENTIFIER RPAR
+;
+
+appendStatement:
+    APPEND LPAR expression COMMA expression RPAR
+;
 
 statementScope:
     BEGIN NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*) END NEWLINE+
