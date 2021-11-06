@@ -59,6 +59,12 @@ public interface CmmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCallArgsDef(CmmParser.CallArgsDefContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CmmParser#funcArgs}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFuncArgs(CmmParser.FuncArgsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CmmParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -107,11 +113,35 @@ public interface CmmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDoWhileStatementScope(CmmParser.DoWhileStatementScopeContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CmmParser#displayStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDisplayStatement(CmmParser.DisplayStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CmmParser#sizeStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSizeStatement(CmmParser.SizeStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CmmParser#appendStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAppendStatement(CmmParser.AppendStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CmmParser#statementScope}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStatementScope(CmmParser.StatementScopeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CmmParser#oneLineStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOneLineStatement(CmmParser.OneLineStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CmmParser#expression}.
 	 * @param ctx the parse tree
@@ -202,6 +232,18 @@ public interface CmmVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVarDeclaration(CmmParser.VarDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CmmParser#oneLineVarDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOneLineVarDeclaration(CmmParser.OneLineVarDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CmmParser#varDecName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarDecName(CmmParser.VarDecNameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CmmParser#value}.
 	 * @param ctx the parse tree

@@ -88,6 +88,16 @@ public interface CmmListener extends ParseTreeListener {
 	 */
 	void exitCallArgsDef(CmmParser.CallArgsDefContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CmmParser#funcArgs}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncArgs(CmmParser.FuncArgsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CmmParser#funcArgs}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncArgs(CmmParser.FuncArgsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CmmParser#statement}.
 	 * @param ctx the parse tree
 	 */
@@ -168,6 +178,36 @@ public interface CmmListener extends ParseTreeListener {
 	 */
 	void exitDoWhileStatementScope(CmmParser.DoWhileStatementScopeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CmmParser#displayStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDisplayStatement(CmmParser.DisplayStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CmmParser#displayStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDisplayStatement(CmmParser.DisplayStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CmmParser#sizeStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSizeStatement(CmmParser.SizeStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CmmParser#sizeStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSizeStatement(CmmParser.SizeStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CmmParser#appendStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterAppendStatement(CmmParser.AppendStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CmmParser#appendStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitAppendStatement(CmmParser.AppendStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CmmParser#statementScope}.
 	 * @param ctx the parse tree
 	 */
@@ -177,6 +217,16 @@ public interface CmmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStatementScope(CmmParser.StatementScopeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CmmParser#oneLineStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterOneLineStatement(CmmParser.OneLineStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CmmParser#oneLineStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitOneLineStatement(CmmParser.OneLineStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CmmParser#expression}.
 	 * @param ctx the parse tree
@@ -327,6 +377,26 @@ public interface CmmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVarDeclaration(CmmParser.VarDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CmmParser#oneLineVarDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterOneLineVarDeclaration(CmmParser.OneLineVarDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CmmParser#oneLineVarDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitOneLineVarDeclaration(CmmParser.OneLineVarDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CmmParser#varDecName}.
+	 * @param ctx the parse tree
+	 */
+	void enterVarDecName(CmmParser.VarDecNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CmmParser#varDecName}.
+	 * @param ctx the parse tree
+	 */
+	void exitVarDecName(CmmParser.VarDecNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CmmParser#value}.
 	 * @param ctx the parse tree
