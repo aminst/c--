@@ -1,7 +1,7 @@
 grammar Cmm;
 
 cmm:
-    (struct | NEWLINE)* (function | NEWLINE)* main NEWLINE*
+    (struct | NEWLINE)* (function | NEWLINE)* main NEWLINE* EOF
     ;
 
 main:
@@ -19,9 +19,9 @@ struct:
 structScope:
     BEGIN
     NEWLINE+
-    (varDeclaration | structFunc | NEWLINE)*
-    NEWLINE+
+    (((varDeclaration | structFunc | NEWLINE)+ NEWLINE+) | NEWLINE*)
     END
+    NEWLINE
     ;
 
 structFunc:
@@ -30,20 +30,20 @@ structFunc:
     setGetFuncs
     NEWLINE
     END
+    NEWLINE
     ;
 
 setGetFuncs:
     SET BEGIN
         NEWLINE+
-        (varDeclaration | statement)*
-        NEWLINE*
+        (((statement)+ NEWLINE+) | NEWLINE*)
     END
     NEWLINE+
     GET BEGIN
         NEWLINE+
-        (varDeclaration | statement)*
-        NEWLINE*
+        (((statement)+ NEWLINE+) | NEWLINE*)
     END
+    NEWLINE
     ;
 
 callArgsDef:
@@ -51,7 +51,8 @@ callArgsDef:
     ;
 
 statement:
-    ifStatement
+    varDeclaration
+    | ifStatement
     | assignStatement
     | whileStatement
     | doWhileStatement
@@ -68,7 +69,7 @@ assignStatement:
     ;
 
 ifStatement:
-    IF LPAR expression RPAR statementScope NEWLINE* (ELSE statementScope)?
+    IF ((LPAR expression RPAR) | expression) statementScope NEWLINE* (ELSE statementScope)?
     ;
 
 callStatement:
@@ -76,7 +77,7 @@ callStatement:
     ;
 
 whileStatement:
-    WHILE LPAR expression RPAR statementScope
+    WHILE ((LPAR expression RPAR) | expression) statementScope
     ;
 
 doWhileStatement:
@@ -84,12 +85,12 @@ doWhileStatement:
     ;
 
 doWhileStatementScope:
-    BEGIN NEWLINE+ (statement)+ NEWLINE* END WHILE LPAR expression RPAR
+    BEGIN NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*) END WHILE ((LPAR expression RPAR) | expression)
     ;
 
 statementScope:
-    BEGIN NEWLINE+ (statement | NEWLINE)+ NEWLINE+ END
-    | NEWLINE+ statement NEWLINE*
+    BEGIN NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*) END NEWLINE+
+    | NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*)
     ;
 
 expression:
@@ -131,8 +132,8 @@ unaryExpression:
     ;
 
 retrieveListExpression:
-    accessMemberExpression
-    (LBRACKET expression RBRACKET)*
+    (accessMemberExpression
+    (LBRACKET expression RBRACKET)*) (DOT retrieveListExpression)*
     ;
 
 accessMemberExpression:
@@ -141,7 +142,7 @@ accessMemberExpression:
     ;
 
 parantheseExpression:
-    valueExpression (LPAR callArgs RPAR)*
+    (valueExpression (LPAR callArgs RPAR)* )
     | LPAR expression RPAR
     ;
 
@@ -156,7 +157,7 @@ valueExpression:
     ;
 
 varDeclaration:
-    type (IDENTIFIER (ASSIGN value)?) (COMMA (IDENTIFIER (ASSIGN value)?))*
+    type (IDENTIFIER (ASSIGN (value | IDENTIFIER))?) (COMMA (IDENTIFIER (ASSIGN (value | IDENTIFIER))?))* SEMICOLON?
     ;
 
 value:
