@@ -19,7 +19,7 @@ struct:
 structScope:
     BEGIN
     NEWLINE+
-    (((varDeclaration | structFunc | NEWLINE)+ NEWLINE+) | NEWLINE*)
+    ((((varDeclaration | structFunc | oneLineVarDeclaration)  NEWLINE+)+ NEWLINE*) | NEWLINE*)
     END
     NEWLINE
     ;
@@ -28,22 +28,14 @@ structFunc:
     (type | VOID) IDENTIFIER LPAR callArgsDef RPAR BEGIN
     NEWLINE
     setGetFuncs
-    NEWLINE
+    NEWLINE*
     END
     NEWLINE
     ;
 
 setGetFuncs:
-    SET BEGIN
-        NEWLINE+
-        (((statement)+ NEWLINE+) | NEWLINE*)
-    END
-    NEWLINE+
-    GET BEGIN
-        NEWLINE+
-        (((statement)+ NEWLINE+) | NEWLINE*)
-    END
-    NEWLINE
+    SET statementScope
+    GET statementScope
     ;
 
 callArgsDef:
@@ -88,7 +80,8 @@ doWhileStatement:
     ;
 
 doWhileStatementScope:
-    BEGIN NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*) END WHILE ((LPAR expression RPAR) | expression)
+    BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*)
+    END WHILE ((LPAR expression RPAR) | expression)
     ;
 
 displayStatement:
@@ -104,9 +97,13 @@ appendStatement:
 ;
 
 statementScope:
-    BEGIN NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*) END NEWLINE+
-    | NEWLINE+ (((statement | NEWLINE)+ NEWLINE+) | NEWLINE*)
+    BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*) END NEWLINE+
+    | NEWLINE+ (statement | oneLineStatement) NEWLINE+
     ;
+
+oneLineStatement:
+    (statement SEMICOLON)*
+;
 
 expression:
     assignExpression
@@ -174,6 +171,10 @@ valueExpression:
 varDeclaration:
     type (IDENTIFIER (ASSIGN (value | IDENTIFIER))?) (COMMA (IDENTIFIER (ASSIGN (value | IDENTIFIER))?))* SEMICOLON?
     ;
+
+oneLineVarDeclaration:
+    (type (IDENTIFIER (ASSIGN (value | IDENTIFIER))?) (COMMA (IDENTIFIER (ASSIGN (value | IDENTIFIER))?))* SEMICOLON)+
+;
 
 value:
     boolValue | NUM
