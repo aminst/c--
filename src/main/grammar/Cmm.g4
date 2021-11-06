@@ -6,7 +6,7 @@ cmm:
 
 main:
     MAIN
-     { System.out.print("MAIN\n");}
+     { System.out.print("Main\n");}
      LPAR RPAR statementScope
     ;
 
@@ -31,12 +31,13 @@ structScope:
     ;
 
 structFunc:
-    (type | VOID) IDENTIFIER LPAR callArgsDef RPAR BEGIN
+    (type | VOID) var_dec=IDENTIFIER
+    { System.out.print("VarDec : "+$var_dec.text+"\n");}
+    LPAR callArgsDef RPAR BEGIN
     NEWLINE
     setGetFuncs
     NEWLINE*
     END
-    NEWLINE
     ;
 
 setGetFuncs:
@@ -106,8 +107,9 @@ doWhileStatement:
     ;
 
 doWhileStatementScope:
-    BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*)
-    END WHILE ((LPAR expression RPAR) | expression)
+    ((BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*) END)
+    | (NEWLINE* (((statement | oneLineStatement) NEWLINE+)  | NEWLINE*)))
+    WHILE ((LPAR expression RPAR) | expression)
     ;
 
 displayStatement:
@@ -129,8 +131,8 @@ appendStatement:
 ;
 
 statementScope:
-    BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*) END NEWLINE+
-    | NEWLINE+ (statement | oneLineStatement) NEWLINE+
+    BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*) END NEWLINE*
+    | NEWLINE+ (statement | oneLineStatement) NEWLINE*
     ;
 
 oneLineStatement:
@@ -220,14 +222,16 @@ valueExpression:
     boolValue
     | NUM
     | IDENTIFIER
+    | sizeStatement
+    | appendStatement
     ;
 
 varDeclaration:
-    type (varDecName (ASSIGN (value | varDecName))?) (COMMA (varDecName (ASSIGN (value | varDecName))?))* SEMICOLON?
+    type (varDecName (ASSIGN expression)?) (COMMA (varDecName (ASSIGN expression)?))* SEMICOLON?
     ;
 
 oneLineVarDeclaration:
-    (type (varDecName (ASSIGN (value | varDecName))?) (COMMA (varDecName (ASSIGN (value | varDecName))?))* SEMICOLON)+
+    (type (varDecName (ASSIGN expression)?) (COMMA (varDecName (ASSIGN expression)?))* SEMICOLON)*
 ;
 
 varDecName:

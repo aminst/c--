@@ -1,65 +1,29 @@
-struct House begin
- int price;
- int area(int _area) begin
+struct S1 begin
+ int var1 , var2 = 3;
+ int id (int _id) begin
  set begin
- area = _area
- price = 1000 * area
+ id = _id;
  end
  get
- return area
+ return id
  end
- struct Room room
+end
+fptr <int -> int> f1(int arg1, bool arg1, list# list# struct S1 arg2) begin
+ fptr <void -> void> ptr1 = f1; return ptr1;
 end
 
-struct Room begin
- int area;
-end
 
-list#int f1(int num) begin
- list#int a
- int i; i=0;
- while(i < num) begin
- append(a, i)
- i = i + 1
- end
- return a;
-end
-
-list#int f2(int num)begin
- list#int a
- int i; i=0
- while(i < num) begin
- append(a, i*i)
- i = i + 1
- end
- return a
-end
-
-fptr<int -> list#int> f3(bool choice, int dummy, struct House h1) begin
- display(dummy)
- display(h1.price)
- if choice
- return f1
+int sample()
+ if a | b * c + d / g
+ if ~(a & b)
+ return append(li, 8 * 9 / func())[1][0];
  else
- return f2
-end
+ return -size(li) + a - n;
 
-main()begin
- fptr<int -> list#int> functionPointer
- struct House h1,h2,h3,h4
- struct Room r1
- r1.area = 12
- h1.room = r1
- h1.area = (90)
- functionPointer = f3(true, 5*2+3-2*2+(-1) ,h1)
- list#int numbers = functionPointer(15)
- list#list#struct House houses
- list#struct House alley1
- list#struct House alley2
- append(alley1, h2)
- append(alley1, h3)
- display(size(alley1))
- append(houses, alley1)
- append(houses, alley2)
- append(houses[1], h4)
+
+main() begin
+ f1()();
+ do
+ i = i + 1 - 3;
+ while i < n & i > k
 end
