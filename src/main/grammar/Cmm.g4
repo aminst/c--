@@ -226,6 +226,7 @@ accessMemberExpression:
     ;
 
 parantheseExpression:
+    { System.out.print("FunctionCall\n");}
     (valueExpression (LPAR callArgs RPAR)* )
     | LPAR expression RPAR
     ;
