@@ -39,21 +39,23 @@ structFunc:
     (type | VOID) var_dec=IDENTIFIER
     { System.out.print("VarDec : "+$var_dec.text+"\n");}
     LPAR callArgsDef RPAR BEGIN
-    NEWLINE
+    NEWLINE+
     setGetFuncs
-    NEWLINE
+    NEWLINE+
     END
     NEWLINE*
     ;
 
 setGetStatementScope:
     BEGIN NEWLINE+ (statement | oneLineStatement)* NEWLINE+ END
+    | (statement | oneLineStatement)
     ;
 
 setGetFuncs:
     SET
     { System.out.print("Setter\n");}
     setGetStatementScope
+    NEWLINE+
     GET
     { System.out.print("Getter\n");}
     setGetStatementScope

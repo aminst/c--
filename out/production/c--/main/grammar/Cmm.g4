@@ -7,7 +7,11 @@ cmm:
 main:
     MAIN
      { System.out.print("Main\n");}
-     LPAR RPAR statementScope
+     LPAR RPAR mainStatementScope
+    ;
+
+mainStatementScope:
+    BEGIN NEWLINE+ (statement | oneLineStatement)+ NEWLINE+ END
     ;
 
 function:
@@ -25,28 +29,36 @@ struct:
 structScope:
     BEGIN
     NEWLINE+
-    ((((varDeclaration | structFunc | oneLineVarDeclaration)  NEWLINE+)+ NEWLINE*) | NEWLINE*)
+    (varDeclaration |  structFunc  | oneLineVarDeclaration)+
+    NEWLINE+
     END
-    NEWLINE
     ;
 
 structFunc:
+    NEWLINE*
     (type | VOID) var_dec=IDENTIFIER
     { System.out.print("VarDec : "+$var_dec.text+"\n");}
     LPAR callArgsDef RPAR BEGIN
-    NEWLINE
+    NEWLINE+
     setGetFuncs
-    NEWLINE*
+    NEWLINE+
     END
+    NEWLINE*
+    ;
+
+setGetStatementScope:
+    BEGIN NEWLINE+ (statement | oneLineStatement)* NEWLINE+ END
+    | (statement | oneLineStatement)
     ;
 
 setGetFuncs:
     SET
     { System.out.print("Setter\n");}
-    statementScope
+    setGetStatementScope
+    NEWLINE+
     GET
     { System.out.print("Getter\n");}
-    statementScope
+    setGetStatementScope
     ;
 
 callArgsDef:
@@ -59,7 +71,8 @@ funcArgs:
 ;
 
 statement:
-    varDeclaration
+    NEWLINE*
+    (varDeclaration
     | ifStatement
     | assignStatement
     | whileStatement
@@ -68,7 +81,8 @@ statement:
     | callStatement
     | displayStatement
     | sizeStatement
-    | appendStatement
+    | appendStatement)
+    NEWLINE*
     ;
 
 returnStatement:
@@ -107,8 +121,10 @@ doWhileStatement:
     ;
 
 doWhileStatementScope:
-    ((BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*) END)
-    | (NEWLINE* (((statement | oneLineStatement) NEWLINE+)  | NEWLINE*)))
+    (
+    BEGIN NEWLINE (statement | oneLineStatement | NEWLINE)* NEWLINE END NEWLINE*
+    | NEWLINE+ (statement | oneLineStatement) NEWLINE*
+    )
     WHILE ((LPAR expression RPAR) | expression)
     ;
 
@@ -131,12 +147,14 @@ appendStatement:
 ;
 
 statementScope:
-    BEGIN NEWLINE+ (((statement | oneLineStatement) NEWLINE+)+  | NEWLINE*) END NEWLINE*
-    | NEWLINE+ (statement | oneLineStatement) NEWLINE*
+    BEGIN NEWLINE+ (statement | oneLineStatement)* NEWLINE+ END
+    | NEWLINE+ (statement | oneLineStatement)
     ;
 
 oneLineStatement:
-    (statement SEMICOLON)*
+    NEWLINE*
+    (statement SEMICOLON)+
+    NEWLINE*
 ;
 
 expression:
@@ -210,6 +228,7 @@ accessMemberExpression:
     ;
 
 parantheseExpression:
+    { System.out.print("FunctionCall\n");}
     (valueExpression (LPAR callArgs RPAR)* )
     | LPAR expression RPAR
     ;
@@ -227,11 +246,15 @@ valueExpression:
     ;
 
 varDeclaration:
+    NEWLINE*
     type (varDecName (ASSIGN expression)?) (COMMA (varDecName (ASSIGN expression)?))* SEMICOLON?
+    NEWLINE*
     ;
 
 oneLineVarDeclaration:
-    (type (varDecName (ASSIGN expression)?) (COMMA (varDecName (ASSIGN expression)?))* SEMICOLON)*
+    NEWLINE*
+    (type (varDecName (ASSIGN expression)?) (COMMA (varDecName (ASSIGN expression)?))* SEMICOLON)+
+    NEWLINE*
 ;
 
 varDecName:
