@@ -27,11 +27,14 @@ struct:
     ;
 
 structScope:
-    BEGIN
+    (BEGIN
     NEWLINE+
     (varDeclaration |  structFunc  | oneLineVarDeclaration)+
     NEWLINE+
-    END
+    END)
+    |
+    (NEWLINE+
+    varDeclaration |  structFunc  | oneLineVarDeclaration)
     ;
 
 structFunc:
@@ -43,7 +46,7 @@ structFunc:
     setGetFuncs
     NEWLINE+
     END
-    NEWLINE*
+    (NEWLINE* | SEMICOLON NEWLINE*)
     ;
 
 setGetStatementScope:
@@ -73,6 +76,7 @@ funcArgs:
 statement:
     NEWLINE*
     (varDeclaration
+    | functionCallStatement
     | ifStatement
     | assignStatement
     | whileStatement
@@ -88,7 +92,7 @@ statement:
 returnStatement:
     RETURN
     { System.out.print("Return\n");}
-    expression?
+    (expression | sizeStatement | displayStatement | appendStatement)?
     ;
 
 assignStatement:
@@ -130,20 +134,25 @@ doWhileStatementScope:
 
 displayStatement:
     DISPLAY
-    { System.out.print("Build-in : display\n");}
-    LPAR logicalOrExpression RPAR
+    { System.out.print("Built-in : display\n");}
+    LPAR expression RPAR
 ;
 
 sizeStatement:
     SIZE
     { System.out.print("Size\n");}
-    LPAR IDENTIFIER RPAR
+    LPAR expression RPAR
 ;
 
 appendStatement:
     APPEND
     { System.out.print("Append\n");}
     LPAR expression COMMA expression RPAR
+;
+
+functionCallStatement:
+    IDENTIFIER LPAR callArgs RPAR
+    { System.out.print("FunctionCall\n");}
 ;
 
 statementScope:
@@ -203,7 +212,7 @@ unaryExpression:
     ((MINUS) unaryExpression
     { System.out.print("Operator : -\n");}
     | (TILDE) unaryExpression
-    { System.out.print("Operator : ~\n");})*
+    { System.out.print("Operator : ~\n");})+
     | retrieveListExpression
     ;
 
@@ -218,9 +227,7 @@ accessMemberExpression:
     ;
 
 parantheseExpression:
-    (valueExpression (LPAR callArgs RPAR
-    { System.out.print("FunctionCall\n");}
-    )* )
+    (valueExpression (LPAR callArgs RPAR)* )
     | LPAR expression RPAR
     ;
 
