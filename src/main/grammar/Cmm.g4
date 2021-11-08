@@ -167,53 +167,43 @@ assignExpression:
     ;
 
 logicalOrExpression:
-    logicalAndExpression (OR
-    { System.out.print("Operator : |\n");}
-    logicalAndExpression)*
+    logicalAndExpression (OR logicalAndExpression { System.out.print("Operator : |\n");})*
     ;
 
 logicalAndExpression:
-    equalExpression (AND
-     { System.out.print("Operator : &\n");}
-     equalExpression)*
+    equalExpression (AND equalExpression { System.out.print("Operator : &\n");} )*
     ;
 
 equalExpression:
-    comparisonExpression (EQUAL
-     { System.out.print("Operator : ==\n");}
-     comparisonExpression)*
+    comparisonExpression (EQUAL comparisonExpression { System.out.print("Operator : ==\n");})*
     ;
 
 comparisonExpression:
-    plusMinusExpression ((GT
-    { System.out.print("Operator : >\n");}
-    | LT
-    { System.out.print("Operator : <\n");}
-    ) plusMinusExpression)*
-    ;
+    plusMinusExpression ((GT) plusMinusExpression
+        { System.out.print("Operator : >\n");}
+        | (LT) plusMinusExpression
+        { System.out.print("Operator : <\n");})*
+        ;
 
 plusMinusExpression:
-    multiplyDivideExpression ((PLUS
-     { System.out.print("Operator : +\n");}
-     | MINUS
-     { System.out.print("Operator : -\n");}
-     ) multiplyDivideExpression)*
+    multiplyDivideExpression ((PLUS) multiplyDivideExpression
+    { System.out.print("Operator : +\n");}
+    | (MINUS) multiplyDivideExpression
+    { System.out.print("Operator : -\n");})*
     ;
 
 multiplyDivideExpression:
-    unaryExpression ((AESTRIK
-    { System.out.print("Operator : *\n");}
-    | DIVIDE
-    { System.out.print("Operator : /\n");}
-    ) unaryExpression)*
+    unaryExpression ((AESTRIK) unaryExpression
+        { System.out.print("Operator : *\n");}
+        | (DIVIDE) unaryExpression
+        { System.out.print("Operator : /\n");})*
     ;
 
 unaryExpression:
-    (MINUS
+    ((MINUS) unaryExpression
     { System.out.print("Operator : -\n");}
-    | TILDE
-    { System.out.print("Operator : ~\n");}
-    ) unaryExpression
+    | (TILDE) unaryExpression
+    { System.out.print("Operator : ~\n");})*
     | retrieveListExpression
     ;
 
@@ -228,8 +218,9 @@ accessMemberExpression:
     ;
 
 parantheseExpression:
+    (valueExpression (LPAR callArgs RPAR
     { System.out.print("FunctionCall\n");}
-    (valueExpression (LPAR callArgs RPAR)* )
+    )* )
     | LPAR expression RPAR
     ;
 
