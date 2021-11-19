@@ -151,8 +151,10 @@ appendStatement:
 ;
 
 functionCallStatement:
-    IDENTIFIER LPAR callArgs RPAR
-    { System.out.print("FunctionCall\n");}
+    IDENTIFIER
+     { System.out.print("FunctionCall\n");}
+     LPAR callArgs RPAR (LPAR callArgs RPAR)*
+
 ;
 
 statementScope:
@@ -228,7 +230,7 @@ accessMemberExpression:
 
 parantheseExpression:
     (valueExpression (LPAR callArgs RPAR)* )
-    | LPAR expression RPAR
+    | LPAR expression? RPAR
     ;
 
 callArgs:
