@@ -124,9 +124,10 @@ displayStatement returns [DisplayStmt displayStatementRet]:
                                 $displayStatementRet.setLine($DISPLAY.getLine());}
   ;
 
-//todo
-assignmentStatement :
-    orExpression ASSIGN expression;
+assignmentStatement returns [AssignmentStmt assignStatementRet]:
+    lvalue = orExpression ASSIGN rvalue = expression
+    {$assignStatementRet = new AssignmentStmt($lvalue.orExpressionRet, $rvalue.expressionRet);
+     $assignStatementRet.setLine($ASSIGN.getLine());};
 
 //todo
 singleStatement :
@@ -138,7 +139,7 @@ expression returns [Expression expressionRet]:
     orExpression (op = ASSIGN expression )? ;
 
 //todo
-orExpression:
+orExpression returns [BinaryExpression orExpressionRet]:
     andExpression (op = OR andExpression )*;
 
 //todo
