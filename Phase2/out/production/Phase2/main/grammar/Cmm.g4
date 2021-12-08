@@ -172,9 +172,8 @@ accessExpression:
 otherExpression:
     value | identifier | LPAR (functionArguments) RPAR | size | append ;
 
-//todo
-size :
-    SIZE LPAR expression RPAR;
+size returns [ListSize sizeRet]:
+    SIZE LPAR expression RPAR {$sizeRet = new ListSize($expression.expressionRet); $sizeRet.setLine($SIZE.getLine());};
 
 append returns [ListAppend appendRet]:
     APPEND LPAR listArg = expression COMMA elementArg = expression RPAR
