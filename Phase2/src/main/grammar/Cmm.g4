@@ -107,9 +107,31 @@ loopCondBody returns [Statement loopCondBodyRet]:
 blockStatement :
     BEGIN (NEWLINE+ (singleStatement SEMICOLON)* singleStatement (SEMICOLON)?)+ NEWLINE+ END;
 
-//todo
-varDecStatement :
-    type identifier (ASSIGN orExpression )? (COMMA identifier (ASSIGN orExpression)? )*;
+varDecStatement returns [VarDecStmt varDecStatementRet] locals [VariableDeclaration var]:
+    {$varDecStatementRet = new VarDecStmt();}
+    type
+    identifier
+    {$var = new VariableDeclaration($identifier.identifierRet, $type.typeRet);
+     $var.setLine($identifier.identifierRet.getLine());
+    }
+    (
+        ASSIGN orExpression
+        {$var.setDefaultValue($orExpression.orExpressionRet);}
+    )?
+    {$varDecStatementRet.addVar($var);}
+    (
+        COMMA
+        identifier
+        {$var = new VariableDeclaration($identifier.identifierRet, $type.typeRet);
+        $var.setLine($identifier.identifierRet.getLine());
+        }
+        (
+            ASSIGN orExpression
+            {$var.setDefaultValue($orExpression.orExpressionRet);}
+        )?
+        {$varDecStatementRet.addVar($var);}
+    )*
+    ;
 
 //todo
 functionCallStmt returns [FunctionCallStmt functionCallStmtRet]:
