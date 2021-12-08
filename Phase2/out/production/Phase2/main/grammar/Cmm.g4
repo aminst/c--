@@ -73,9 +73,18 @@ getBody returns [Statement getBodyRet]:
 setBody returns [Statement setBodyRet]:
     SET body {$setBodyRet = $body.bodyRet;} NEWLINE+;
 
-//todo
 functionDeclaration returns[FunctionDeclaration functionDeclarationRet]:
-    (type | VOID ) identifier functionArgsDec body NEWLINE+;
+    (
+        type {$functionDeclarationRet.setReturnType($type.typeRet);}
+        |
+        VOID {$functionDeclarationRet.setReturnType(new VoidType());}
+    )
+    identifier
+    {$functionDeclarationRet.setFunctionName($identifier.identifierRet);
+    $functionDeclarationRet.setLine($identifier.identifierRet.getLine());}
+    functionArgsDec {$functionDeclarationRet.setArgs($functionArgsDec.functionArgsDecRet);}
+    body {$functionDeclarationRet.setBody($body.bodyRet);}
+    NEWLINE+;
 
 functionArgsDec returns [ArrayList<VariableDeclaration> functionArgsDecRet] locals [VariableDeclaration var]:
     LPAR
@@ -95,21 +104,40 @@ functionArgsDec returns [ArrayList<VariableDeclaration> functionArgsDecRet] loca
     )?
     RPAR ;
 
-//todo
-functionArguments :
-    (expression (COMMA expression)*)?;
+functionArguments returns [ArrayList<Expression> functionArgumentsRet]:
+    (
+        expression {$functionArgumentsRet.add($expression.expressionRet);}
+        (
+            COMMA expression {$functionArgumentsRet.add($expression.expressionRet);}
+        )*
+    )?;
 
-//todo
 body returns [Statement bodyRet]:
-     (blockStatement | (NEWLINE+ singleStatement (SEMICOLON)?));
+     (
+        blockStatement {$bodyRet = $blockStatement.blockStatementRet;}
+        |
+        (
+            NEWLINE+
+            singleStatement {$bodyRet = $singleStatement.singleStatementRet;}
+            (SEMICOLON)?
+        )
+    );
 
-//todo
 loopCondBody returns [Statement loopCondBodyRet]:
-     (blockStatement | (NEWLINE+ singleStatement ));
+     (
+        blockStatement {$loopCondBodyRet = $blockStatement.blockStatementRet;}
+        |
+        (NEWLINE+ singleStatement {$loopCondBodyRet = $singleStatement.singleStatementRet;})
+     );
 
-//todo
-blockStatement :
-    BEGIN (NEWLINE+ (singleStatement SEMICOLON)* singleStatement (SEMICOLON)?)+ NEWLINE+ END;
+blockStatement returns [BlockStmt blockStatementRet]:
+    BEGIN {$blockStatementRet.setLine($BEGIN.getLine());}
+    (
+        NEWLINE+
+        (singleStatement SEMICOLON {$blockStatementRet.addStatement($singleStatement.singleStatementRet);})*
+        singleStatement {$blockStatementRet.addStatement($singleStatement.singleStatementRet);} (SEMICOLON)?
+    )+
+    NEWLINE+ END;
 
 varDecStatement returns [VarDecStmt varDecStatementRet] locals [VariableDeclaration var]:
     {$varDecStatementRet = new VarDecStmt();}
@@ -141,10 +169,10 @@ varDecStatement returns [VarDecStmt varDecStatementRet] locals [VariableDeclarat
 functionCallStmt returns [FunctionCallStmt functionCallStmtRet]:
      otherExpression ((LPAR functionArguments RPAR) | (DOT identifier))* (LPAR functionArguments RPAR);
 
-returnStatement returns [ReturnStmt returnStmtRet] locals [Expression returnedExpr]:
+returnStatement returns [ReturnStmt returnStatementRet] locals [Expression returnedExpr]:
     RETURN (expression {$returnedExpr = $expression.expressionRet;})?
-    {$returnStmtRet = new ReturnStmt(); $returnStmtRet.setLine($RETURN.getLine());
-     $returnStmtRet.setReturnedExpr($returnedExpr);}
+    {$returnStatementRet = new ReturnStmt(); $returnStatementRet.setLine($RETURN.getLine());
+     $returnStatementRet.setReturnedExpr($returnedExpr);}
     ;
 
 ifStatement returns [ConditionalStmt ifStatementRet] locals [Statement thenBody, Statement elseBody]:
@@ -197,10 +225,25 @@ assignmentStatement returns [AssignmentStmt assignStatementRet]:
     {$assignStatementRet = new AssignmentStmt($lvalue.orExpressionRet, $rvalue.expressionRet);
      $assignStatementRet.setLine($ASSIGN.getLine());};
 
-//todo
-singleStatement :
-    ifStatement | displayStatement | functionCallStmt | returnStatement | assignmentStatement
-    | varDecStatement | loopStatement | append | size;
+singleStatement returns [Statement singleStatementRet]:
+    ifStatement {$singleStatementRet = $ifStatement.ifStatementRet;}
+    |
+    displayStatement {$singleStatementRet = $displayStatement.displayStatementRet;}
+    |
+    functionCallStmt {$singleStatementRet = $functionCallStmt.functionCallStmtRet;}
+    |
+    returnStatement {$singleStatementRet = $returnStatement.returnStatementRet;}
+    |
+    assignmentStatement {$singleStatementRet = $assignmentStatement.assignStatementRet;}
+    |
+    varDecStatement {$singleStatementRet = $varDecStatement.varDecStatementRet;}
+    |
+    loopStatement {$singleStatementRet = $loopStatement.loopStatementRet;}
+    |
+    append {$singleStatementRet = $append.appendRet;}
+    |
+    size {$singleStatementRet = $size.sizeRet;}
+    ;
 
 //todo
 expression returns [Expression expressionRet]:
@@ -238,16 +281,38 @@ preUnaryExpression:
 accessExpression:
     otherExpression ((LPAR functionArguments RPAR) | (DOT identifier))*  ((LBRACK expression RBRACK) | (DOT identifier))*;
 
-//todo
-otherExpression:
-    value | identifier | LPAR (functionArguments) RPAR | size | append ;
+otherExpression returns [Expression otherExpressionRet] locals [ExprInPar exprInPar]:
+    value {$otherExpressionRet = $value.valueRet;}
+    |
+    identifier {$otherExpressionRet = $identifier.identifierRet;}
+    |
+    LPAR (functionArguments) RPAR
+        {$exprInPar = new ExprInPar($functionArguments.functionArgumentsRet);
+        $exprInPar.setLine($LPAR.getLine());
+        $otherExpressionRet = $exprInPar;}
+    |
+    size {$otherExpressionRet = $size.sizeRet.getListSizeExpr();}
+    |
+    append {$otherExpressionRet = $append.appendRet.getListAppendExpr();}
+    ;
 
-size returns [ListSize sizeRet]:
-    SIZE LPAR expression RPAR {$sizeRet = new ListSize($expression.expressionRet); $sizeRet.setLine($SIZE.getLine());};
+size returns [ListSizeStmt sizeRet] locals [ListSize ls]:
+    SIZE LPAR expression RPAR
+    {
+    $ls = new ListSize($expression.expressionRet);
+    $ls.setLine($SIZE.getLine());
+    $sizeRet = new ListSizeStmt($ls);
+    $sizeRet.setLine($ls.getLine());
+    };
 
-append returns [ListAppend appendRet]:
+append returns [ListAppendStmt appendRet] locals [ListAppend la]:
     APPEND LPAR listArg = expression COMMA elementArg = expression RPAR
-    {$appendRet = new ListAppend($listArg.expressionRet, $elementArg.expressionRet); $appendRet.setLine($APPEND.getLine());}
+    {
+    $la = new ListAppend($listArg.expressionRet, $elementArg.expressionRet);
+    $la.setLine($APPEND.getLine());
+    $appendRet = new ListAppendStmt($la);
+    $appendRet.setLine($la.getLine());
+    }
     ;
 
 value returns [Value valueRet]:
