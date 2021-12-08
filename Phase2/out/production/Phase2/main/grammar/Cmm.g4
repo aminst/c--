@@ -43,9 +43,15 @@ structDeclaration returns[StructDeclaration structDeclarationRet]:
     )
     NEWLINE+;
 
-//todo
-singleVarWithGetAndSet :
-    type identifier functionArgsDec BEGIN NEWLINE+ setBody getBody END;
+singleVarWithGetAndSet returns [SetGetVarDeclaration singleVarWithGetAndSetRet]:
+    {$singleVarWithGetAndSetRet = new SetGetVarDeclaration();}
+    type {$singleVarWithGetAndSetRet.setVarType($type.typeRet);}
+    identifier {$singleVarWithGetAndSetRet.setVarName($identifier.identifierRet);}
+    functionArgsDec {$singleVarWithGetAndSetRet.setArgs($functionArgsDec.functionArgsDecRet);}
+    BEGIN NEWLINE+
+    setBody {$singleVarWithGetAndSetRet.setSetterBody($setBody.setBodyRet);}
+    getBody {$singleVarWithGetAndSetRet.setGetterBody($getBody.getBodyRet);}
+    END;
 
 //todo
 singleStatementStructBody returns [Statement singleStatementStructBodyRet]:
@@ -56,20 +62,34 @@ structBody returns [Statement structBodyRet]:
     (NEWLINE+ (singleStatementStructBody SEMICOLON)* singleStatementStructBody SEMICOLON?)+;
 
 //todo
-getBody :
+getBody returns [Statement getBodyRet]:
     GET body NEWLINE+;
 
 //todo
-setBody :
+setBody returns [Statement setBodyRet]:
     SET body NEWLINE+;
 
 //todo
 functionDeclaration returns[FunctionDeclaration functionDeclarationRet]:
     (type | VOID ) identifier functionArgsDec body NEWLINE+;
 
-//todo
-functionArgsDec :
-    LPAR (type identifier (COMMA type identifier)*)? RPAR ;
+functionArgsDec returns [ArrayList<VariableDeclaration> functionArgsDecRet] locals [VariableDeclaration var]:
+    LPAR
+    (
+        fType = type fIdentifier = identifier
+        {$var = new VariableDeclaration($fIdentifier.identifierRet, $fType.typeRet);
+        $var.setLine($fIdentifier.identifierRet.getLine());
+        $functionArgsDecRet.add($var);}
+        (
+            COMMA adType = type adIdentifier = identifier
+            {
+                $var = new VariableDeclaration($adIdentifier.identifierRet, $adType.typeRet);
+                $var.setLine($adIdentifier.identifierRet.getLine());
+                $functionArgsDecRet.add($var);
+            }
+        )*
+    )?
+    RPAR ;
 
 //todo
 functionArguments :
@@ -92,24 +112,38 @@ varDecStatement :
     type identifier (ASSIGN orExpression )? (COMMA identifier (ASSIGN orExpression)? )*;
 
 //todo
-functionCallStmt :
+functionCallStmt returns [FunctionCallStmt functionCallStmtRet]:
      otherExpression ((LPAR functionArguments RPAR) | (DOT identifier))* (LPAR functionArguments RPAR);
 
-//todo
-returnStatement :
-    RETURN (expression)?;
+returnStatement returns [ReturnStmt returnStmtRet] locals [Expression returnedExpr]:
+    RETURN (expression {$returnedExpr = $expression.expressionRet;})?
+    {$returnStmtRet = new ReturnStmt(); $returnStmtRet.setLine($RETURN.getLine());
+     $returnStmtRet.setReturnedExpr($returnedExpr);}
+    ;
 
-//todo
-ifStatement :
-    IF expression (loopCondBody | body elseStatement);
+ifStatement returns [ConditionalStmt ifStatementRet] locals [Statement thenBody, Statement elseBody]:
+    IF expression
+    (
+        loopCondBody {$thenBody = $loopCondBody.loopCondBodyRet;}
+        |
+        body elseStatement {$thenBody = $body.bodyRet; $elseBody = $elseStatement.elseStatementRet;}
+    )
+    {$ifStatementRet = new ConditionalStmt($expression.expressionRet);
+     $ifStatementRet.setLine($IF.getLine());
+     $ifStatementRet.setThenBody($thenBody);
+     $ifStatementRet.setElseBody($elseBody);}
+    ;
 
-//todo
-elseStatement :
-     NEWLINE* ELSE loopCondBody;
+elseStatement returns [Statement elseStatementRet]:
+     NEWLINE* ELSE loopCondBody
+     {$elseStatementRet = $loopCondBody.loopCondBodyRet;}
+     ;
 
-//todo
-loopStatement :
-    whileLoopStatement | doWhileLoopStatement;
+loopStatement returns [Statement loopStatementRet]:
+    whileLoopStatement {$loopStatementRet = $whileLoopStatement.whileLoopStatementRet;}
+    |
+    doWhileLoopStatement {$loopStatementRet = $doWhileLoopStatement.doWhileLoopStatementRet;}
+    ;
 
 whileLoopStatement returns [LoopStmt whileLoopStatementRet]:
     WHILE expression loopCondBody
