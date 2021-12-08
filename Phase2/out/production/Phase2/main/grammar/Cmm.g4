@@ -115,9 +115,13 @@ loopStatement :
 whileLoopStatement :
     WHILE expression loopCondBody;
 
-//todo
-doWhileLoopStatement :
-    DO body NEWLINE* WHILE expression;
+doWhileLoopStatement returns [LoopStmt doWhileLoopStatementRet]:
+    DO body NEWLINE* WHILE expression
+    {$doWhileLoopStatementRet = new LoopStmt();
+     $doWhileLoopStatementRet.setBody($body.bodyRet);
+     $doWhileLoopStatementRet.setCondition($expression.expressionRet);
+     $doWhileLoopStatementRet.setLine($DO.getLine());}
+     ;
 
 displayStatement returns [DisplayStmt displayStatementRet]:
   DISPLAY LPAR expression RPAR {$displayStatementRet = new DisplayStmt($expression.expressionRet);
