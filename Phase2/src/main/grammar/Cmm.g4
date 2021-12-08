@@ -192,13 +192,39 @@ boolValue:
 identifier returns [Identifier identifierRet]:
     IDENTIFIER;
 
-//todo
-type:
-    INT | BOOL | LIST SHARP type | STRUCT identifier | fptrType;
+type returns [Type typeRet]:
+    (
+        INT {$typeRet = new IntType();}
+        |
+        BOOL {$typeRet = new BoolType();}
+        |
+        LIST SHARP t = type {$typeRet = new ListType($t.typeRet);}
+        |
+        STRUCT i = identifier {$typeRet = new StructType($i.identifierRet);}
+        |
+        fptrType {$typeRet = $fptrType.fptrTypeRet;}
+    );
 
-//todo
-fptrType:
-    FPTR LESS_THAN (VOID | (type (COMMA type)*)) ARROW (type | VOID) GREATER_THAN;
+fptrType returns [FptrType fptrTypeRet] locals [ArrayList<Type> argsType, Type returnType]:
+    {$fptrTypeRet = new FptrType($argsType, $returnType);}
+    FPTR LESS_THAN
+    (
+        VOID {$argsType.add(new VoidType());}
+        |
+        (
+            fType = type {$argsType.add($fType.typeRet);}
+            (COMMA adType = type {$argsType.add($adType.typeRet);})*
+        )
+    )
+    {$fptrTypeRet.setArgsType($argsType);}
+    ARROW
+    (
+        rtType = type {$returnType = $rtType.typeRet;}
+        |
+        VOID {$returnType = new VoidType();}
+    )
+    {$fptrTypeRet.setReturnType($returnType);}
+    GREATER_THAN;
 
 MAIN: 'main';
 RETURN: 'return';
