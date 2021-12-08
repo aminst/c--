@@ -119,9 +119,10 @@ whileLoopStatement :
 doWhileLoopStatement :
     DO body NEWLINE* WHILE expression;
 
-//todo
-displayStatement :
-  DISPLAY LPAR expression RPAR;
+displayStatement returns [DisplayStmt displayStatementRet]:
+  DISPLAY LPAR expression RPAR {$displayStatementRet = new DisplayStmt($expression.expressionRet);
+                                $displayStatementRet.setLine($DISPLAY.getLine());}
+  ;
 
 //todo
 assignmentStatement :
