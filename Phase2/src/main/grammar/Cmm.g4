@@ -80,7 +80,7 @@ body returns [Statement bodyRet]:
      (blockStatement | (NEWLINE+ singleStatement (SEMICOLON)?));
 
 //todo
-loopCondBody :
+loopCondBody returns [Statement loopCondBodyRet]:
      (blockStatement | (NEWLINE+ singleStatement ));
 
 //todo
@@ -111,9 +111,13 @@ elseStatement :
 loopStatement :
     whileLoopStatement | doWhileLoopStatement;
 
-//todo
-whileLoopStatement :
-    WHILE expression loopCondBody;
+whileLoopStatement returns [LoopStmt whileLoopStatementRet]:
+    WHILE expression loopCondBody
+    {$whileLoopStatementRet = new LoopStmt();
+     $whileLoopStatementRet.setLine($WHILE.getLine());
+     $whileLoopStatementRet.setCondition($expression.expressionRet);
+     $whileLoopStatementRet.setBody($loopCondBody.loopCondBodyRet);}
+    ;
 
 doWhileLoopStatement returns [LoopStmt doWhileLoopStatementRet]:
     DO body NEWLINE* WHILE expression
@@ -121,7 +125,7 @@ doWhileLoopStatement returns [LoopStmt doWhileLoopStatementRet]:
      $doWhileLoopStatementRet.setBody($body.bodyRet);
      $doWhileLoopStatementRet.setCondition($expression.expressionRet);
      $doWhileLoopStatementRet.setLine($DO.getLine());}
-     ;
+    ;
 
 displayStatement returns [DisplayStmt displayStatementRet]:
   DISPLAY LPAR expression RPAR {$displayStatementRet = new DisplayStmt($expression.expressionRet);
