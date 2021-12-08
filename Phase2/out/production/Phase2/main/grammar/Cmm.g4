@@ -25,7 +25,6 @@ program returns[Program programRet]:
     (f = functionDeclaration {$programRet.addFunction($f.functionDeclarationRet);})*
     m = main {$programRet.setMain($m.mainRet);};
 
-//todo
 main returns[MainDeclaration mainRet]:
     {$mainRet = new MainDeclaration();}
     MAIN {$mainRet.setLine($MAIN.getLine());}
@@ -33,20 +32,27 @@ main returns[MainDeclaration mainRet]:
     {$mainRet.setBody($body.bodyRet);}
     ;
 
-//todo
 structDeclaration returns[StructDeclaration structDeclarationRet]:
-    STRUCT identifier ((BEGIN structBody NEWLINE+ END) | (NEWLINE+ singleStatementStructBody SEMICOLON?)) NEWLINE+;
+    {$structDeclarationRet = new StructDeclaration();}
+    STRUCT {$structDeclarationRet.setLine($STRUCT.getLine());}
+    identifier {$structDeclarationRet.setStructName($identifier.identifierRet);}
+    (
+        (BEGIN structBody NEWLINE+ END) {$structDeclarationRet.setBody($structBody.structBodyRet);}
+        |
+        (NEWLINE+ singleStatementStructBody SEMICOLON?) {$structDeclarationRet.setBody($singleStatementStructBody.singleStatementStructBodyRet);}
+    )
+    NEWLINE+;
 
 //todo
 singleVarWithGetAndSet :
     type identifier functionArgsDec BEGIN NEWLINE+ setBody getBody END;
 
 //todo
-singleStatementStructBody :
+singleStatementStructBody returns [Statement singleStatementStructBodyRet]:
     varDecStatement | singleVarWithGetAndSet;
 
 //todo
-structBody :
+structBody returns [Statement structBodyRet]:
     (NEWLINE+ (singleStatementStructBody SEMICOLON)* singleStatementStructBody SEMICOLON?)+;
 
 //todo
@@ -183,7 +189,7 @@ boolValue:
     TRUE | FALSE;
 
 //todo
-identifier:
+identifier returns [Identifier identifierRet]:
     IDENTIFIER;
 
 //todo
