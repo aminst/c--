@@ -184,11 +184,14 @@ append :
 value :
     boolValue | INT_VALUE;
 
-//todo
-boolValue:
-    TRUE | FALSE;
+boolValue returns [BoolValue boolValueRet]:
+    (
+        TRUE {$boolValueRet = new BoolValue(true); $boolValueRet.setLine($TRUE.getLine());}
+        |
+        FALSE {$boolValueRet = new BoolValue(false); $boolValueRet.setLine($FALSE.getLine());}
+    )
+    ;
 
-//todo
 identifier returns [Identifier identifierRet]:
     IDENTIFIER {$identifierRet = new Identifier($IDENTIFIER.getText());
         $identifierRet.setLine($IDENTIFIER.getLine());
