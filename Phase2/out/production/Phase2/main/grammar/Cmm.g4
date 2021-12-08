@@ -166,8 +166,29 @@ varDecStatement returns [VarDecStmt varDecStatementRet] locals [VariableDeclarat
     ;
 
 //todo
-functionCallStmt returns [FunctionCallStmt functionCallStmtRet]:
-     otherExpression ((LPAR functionArguments RPAR) | (DOT identifier))* (LPAR functionArguments RPAR);
+functionCallStmt returns [FunctionCallStmt functionCallStmtRet] locals [FunctionCall fc, Expression e]:
+     otherExpression {$e = $otherExpression.otherExpressionRet;}
+     (
+        (LPAR functionArguments RPAR)
+        {
+            $e = new FunctionCall($e, $functionArguments.functionArgumentsRet);
+            $e.setLine($LPAR.getLine());
+        }
+        |
+        (DOT identifier)
+        {
+            $e = new StructAccess($e, $identifier.identifierRet);
+            $e.setLine($DOT.getLine());
+        }
+     )*
+     (LPAR functionArguments RPAR)
+     {
+        $fc = new FunctionCall($e, $functionArguments.functionArgumentsRet);
+        $fc.setLine($LPAR.getLine());
+        $functionCallStmtRet = new FunctionCallStmt($fc);
+        $functionCallStmtRet.setLine($fc.getLine());
+     }
+     ;
 
 returnStatement returns [ReturnStmt returnStatementRet] locals [Expression returnedExpr]:
     RETURN (expression {$returnedExpr = $expression.expressionRet;})?
@@ -245,41 +266,138 @@ singleStatement returns [Statement singleStatementRet]:
     size {$singleStatementRet = $size.sizeRet;}
     ;
 
-//todo
 expression returns [Expression expressionRet]:
-    orExpression (op = ASSIGN expression )? ;
+    orExpression {$expressionRet = $orExpression.orExpressionRet;}
+    (
+        op = ASSIGN expression
+        {
+            $expressionRet = new BinaryExpression($expressionRet, $expression.expressionRet, BinaryOperator.assign);
+            $expressionRet.setLine($op.getLine());
+        }
+    )?
+    ;
 
-//todo
-orExpression returns [BinaryExpression orExpressionRet]:
-    andExpression (op = OR andExpression )*;
+orExpression returns [Expression orExpressionRet]:
+    andExpression {$orExpressionRet = $andExpression.andExpressionRet;}
+    (
+        op = OR andExpression
+        {
+            $orExpressionRet = new BinaryExpression($orExpressionRet, $andExpression.andExpressionRet, BinaryOperator.or);
+            $orExpressionRet.setLine($op.getLine());
+        }
+    )*;
 
-//todo
-andExpression:
-    equalityExpression (op = AND equalityExpression )*;
+andExpression returns [Expression andExpressionRet]:
+    equalityExpression {$andExpressionRet = $equalityExpression.equalityExpressionRet;}
+    (
+        op = AND equalityExpression
+        {
+            $andExpressionRet = new BinaryExpression($andExpressionRet, $equalityExpression.equalityExpressionRet, BinaryOperator.and);
+            $andExpressionRet.setLine($op.getLine());
+        }
+    )*
+    ;
 
-//todo
-equalityExpression:
-    relationalExpression (op = EQUAL relationalExpression )*;
+equalityExpression returns [Expression equalityExpressionRet]:
+    relationalExpression {$equalityExpressionRet = $relationalExpression.relationalExpressionRet;}
+    (
+        op = EQUAL relationalExpression
+        {
+            $equalityExpressionRet = new BinaryExpression($equalityExpressionRet, $relationalExpression.relationalExpressionRet, BinaryOperator.eq);
+            $equalityExpressionRet.setLine($op.getLine());
+        }
+    )*;
 
-//todo
-relationalExpression:
-    additiveExpression ((op = GREATER_THAN | op = LESS_THAN) additiveExpression )*;
+relationalExpression returns [Expression relationalExpressionRet] locals [BinaryOperator o, int line]:
+    additiveExpression {$relationalExpressionRet = $additiveExpression.additiveExpressionRet;}
+    (
+        (
+            op = GREATER_THAN {$o = BinaryOperator.gt; $line = $op.getLine();}
+            |
+            op = LESS_THAN {$o = BinaryOperator.lt; $line = $op.getLine();}
+        )
+        additiveExpression
+        {
+            $relationalExpressionRet = new BinaryExpression($relationalExpressionRet, $additiveExpression.additiveExpressionRet, $o);
+            $relationalExpressionRet.setLine($line);
+        }
+    )*;
 
-//todo
-additiveExpression:
-    multiplicativeExpression ((op = PLUS | op = MINUS) multiplicativeExpression )*;
+additiveExpression returns [Expression additiveExpressionRet] locals [BinaryOperator o, int line]:
+    multiplicativeExpression {$additiveExpressionRet = $multiplicativeExpression.multiplicativeExpressionRet;}
+    (
+        (
+            op = PLUS {$o = BinaryOperator.add; $line = $op.getLine();}
+            |
+            op = MINUS {$o = BinaryOperator.sub; $line = $op.getLine();}
+        )
+        multiplicativeExpression
+        {
+            $additiveExpressionRet = new BinaryExpression($additiveExpressionRet, $multiplicativeExpression.multiplicativeExpressionRet, $o);
+            $additiveExpressionRet.setLine($line);
+        }
+    )*;
 
-//todo
-multiplicativeExpression:
-    preUnaryExpression ((op = MULT | op = DIVIDE) preUnaryExpression )*;
+multiplicativeExpression returns [Expression multiplicativeExpressionRet] locals [BinaryOperator o, int line]:
+    preUnaryExpression {$multiplicativeExpressionRet = $preUnaryExpression.preUnaryExpressionRet;}
+    (
+        (
+            op = MULT {$o = BinaryOperator.mult; $line = $op.getLine();}
+            |
+            op = DIVIDE {$o = BinaryOperator.div; $line = $op.getLine();}
+        )
+        preUnaryExpression
+        {
+            $multiplicativeExpressionRet = new BinaryExpression($multiplicativeExpressionRet, $preUnaryExpression.preUnaryExpressionRet, $o);
+            $multiplicativeExpressionRet.setLine($line);
+        }
+    )*;
 
-//todo
-preUnaryExpression:
-    ((op = NOT | op = MINUS) preUnaryExpression ) | accessExpression;
+preUnaryExpression returns [Expression preUnaryExpressionRet] locals [UnaryOperator o, int line]:
+    (
+        (
+            op = NOT {$o = UnaryOperator.not; $line = $op.getLine();}
+            |
+            op = MINUS {$o = UnaryOperator.minus; $line = $op.getLine();}
+        )
+        preUnaryExpression
+        {
+            $preUnaryExpressionRet = new UnaryExpression($preUnaryExpression.preUnaryExpressionRet, $o);
+            $preUnaryExpressionRet.setLine($line);
+        }
+    )
+    |
+    accessExpression {$preUnaryExpressionRet = $accessExpression.accessExpressionRet;}
+    ;
 
-//todo
-accessExpression:
-    otherExpression ((LPAR functionArguments RPAR) | (DOT identifier))*  ((LBRACK expression RBRACK) | (DOT identifier))*;
+accessExpression returns [Expression accessExpressionRet]:
+    otherExpression {$accessExpressionRet = $otherExpression.otherExpressionRet;}
+    (
+        (LPAR functionArguments RPAR)
+        {
+            $accessExpressionRet = new FunctionCall($accessExpressionRet, $functionArguments.functionArgumentsRet);
+            $accessExpressionRet.setLine($LPAR.getLine());
+        }
+        |
+        (DOT identifier)
+        {
+            $accessExpressionRet = new StructAccess($accessExpressionRet, $identifier.identifierRet);
+            $accessExpressionRet.setLine($DOT.getLine());
+        }
+    )*
+    (
+        (LBRACK expression RBRACK)
+        {
+            $accessExpressionRet = new ListAccessByIndex($accessExpressionRet, $expression.expressionRet);
+            $accessExpressionRet.setLine($LBRACK.getLine());
+        }
+        |
+        (DOT identifier)
+        {
+            $accessExpressionRet = new StructAccess($accessExpressionRet, $identifier.identifierRet);
+            $accessExpressionRet.setLine($DOT.getLine());
+        }
+    )*;
 
 otherExpression returns [Expression otherExpressionRet] locals [ExprInPar exprInPar]:
     value {$otherExpressionRet = $value.valueRet;}
