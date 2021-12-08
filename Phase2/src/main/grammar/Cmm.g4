@@ -180,9 +180,11 @@ size :
 append :
     APPEND LPAR expression COMMA expression RPAR;
 
-//todo
-value :
-    boolValue | INT_VALUE;
+value returns [Value valueRet]:
+    boolValue {$valueRet = $boolValue.boolValueRet;}
+    |
+    INT_VALUE {$valueRet = new IntValue($INT_VALUE.int); $valueRet.setLine($INT_VALUE.getLine());}
+    ;
 
 boolValue returns [BoolValue boolValueRet]:
     (
