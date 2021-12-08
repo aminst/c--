@@ -133,7 +133,7 @@ singleStatement :
     | varDecStatement | loopStatement | append | size;
 
 //todo
-expression:
+expression returns [Expression expressionRet]:
     orExpression (op = ASSIGN expression )? ;
 
 //todo
@@ -176,9 +176,10 @@ otherExpression:
 size :
     SIZE LPAR expression RPAR;
 
-//todo
-append :
-    APPEND LPAR expression COMMA expression RPAR;
+append returns [ListAppend appendRet]:
+    APPEND LPAR listArg = expression COMMA elementArg = expression RPAR
+    {$appendRet = new ListAppend($listArg.expressionRet, $elementArg.expressionRet); $appendRet.setLine($APPEND.getLine());}
+    ;
 
 value returns [Value valueRet]:
     boolValue {$valueRet = $boolValue.boolValueRet;}
