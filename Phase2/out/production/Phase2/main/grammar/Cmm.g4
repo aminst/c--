@@ -190,9 +190,10 @@ boolValue:
 
 //todo
 identifier returns [Identifier identifierRet]:
-    IDENTIFIER;
+    IDENTIFIER {$identifierRet = new Identifier($IDENTIFIER.getText());
+        $identifierRet.setLine($IDENTIFIER.getLine());
+    };
 
-//todo
 type returns [Type typeRet]:
     (
         INT {$typeRet = new IntType();}
@@ -206,7 +207,6 @@ type returns [Type typeRet]:
         fptrType {$typeRet = $fptrType.fptrTypeRet;}
     );
 
-//todo
 fptrType returns [FptrType fptrTypeRet] locals [ArrayList<Type> argsType, Type returnType]:
     {$fptrTypeRet = new FptrType($argsType, $returnType);}
     FPTR LESS_THAN

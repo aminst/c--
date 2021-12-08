@@ -190,7 +190,9 @@ boolValue:
 
 //todo
 identifier returns [Identifier identifierRet]:
-    IDENTIFIER;
+    IDENTIFIER {$identifierRet = new Identifier($IDENTIFIER.getText());
+        $identifierRet.setLine($IDENTIFIER.getLine());
+    };
 
 type returns [Type typeRet]:
     (
