@@ -53,21 +53,25 @@ singleVarWithGetAndSet returns [SetGetVarDeclaration singleVarWithGetAndSetRet]:
     getBody {$singleVarWithGetAndSetRet.setGetterBody($getBody.getBodyRet);}
     END;
 
-//todo
 singleStatementStructBody returns [Statement singleStatementStructBodyRet]:
-    varDecStatement | singleVarWithGetAndSet;
+    varDecStatement {$singleStatementStructBodyRet = $varDecStatement.varDecStatementRet;}
+    |
+    singleVarWithGetAndSet {$singleStatementStructBodyRet = $singleVarWithGetAndSet.singleVarWithGetAndSetRet;}
+    ;
 
-//todo
-structBody returns [Statement structBodyRet]:
-    (NEWLINE+ (singleStatementStructBody SEMICOLON)* singleStatementStructBody SEMICOLON?)+;
+structBody returns [BlockStmt structBodyRet]:
+    (
+        NEWLINE+
+        (singleStatementStructBody SEMICOLON {$structBodyRet.addStatement($singleStatementStructBody.singleStatementStructBodyRet);})*
+        singleStatementStructBody {$structBodyRet.addStatement($singleStatementStructBody.singleStatementStructBodyRet);} SEMICOLON?
+    )+
+    ;
 
-//todo
 getBody returns [Statement getBodyRet]:
-    GET body NEWLINE+;
+    GET body {$getBodyRet = $body.bodyRet;} NEWLINE+;
 
-//todo
 setBody returns [Statement setBodyRet]:
-    SET body NEWLINE+;
+    SET body {$setBodyRet = $body.bodyRet;} NEWLINE+;
 
 //todo
 functionDeclaration returns[FunctionDeclaration functionDeclarationRet]:
