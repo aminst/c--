@@ -5,6 +5,7 @@ import main.grammar.CmmParser;
 import main.visitor.name.ASTTreePrinter;
 import main.visitor.name.SymbolTableVisitor;
 import main.ast.nodes.Program;
+import main.visitor.name.SymbolTableVisitorDependencyCycle;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -18,6 +19,7 @@ public class CmmCompiler {
 
         CmmErrors cmmErrors = new CmmErrors();
         program.accept(new SymbolTableVisitor());
+        program.accept(new SymbolTableVisitorDependencyCycle());
 
         if(cmmErrors.hasErrors())
             cmmErrors.printErrors();
