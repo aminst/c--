@@ -16,15 +16,12 @@ public class CmmCompiler {
 
         Program program = cmmParser.cmm().cmmProgram;
 
-//        CmmErrors cmmErrors = new CmmErrors();
-//        program.accept(new SymbolTableVisitor());
-//
-//        if(cmmErrors.hasErrors())
-//            cmmErrors.printErrors();
-//        else
+        CmmErrors cmmErrors = new CmmErrors();
+        program.accept(new SymbolTableVisitor());
 
+        if(cmmErrors.hasErrors())
+            cmmErrors.printErrors();
+        else
             program.accept(new ASTTreePrinter());
-//        System.out.println(program.getMain());
-
     }
 }

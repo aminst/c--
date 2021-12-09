@@ -2,6 +2,7 @@ package main;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class CmmErrors {
     public static Set<String> errors = new HashSet<>();
@@ -11,7 +12,8 @@ public class CmmErrors {
     }
 
     public static void printErrors() {
-        for (String error: errors)
+        TreeSet<String> treeSet = new TreeSet<String>(errors);
+        for (String error: treeSet)
             System.out.println(error);
     }
 

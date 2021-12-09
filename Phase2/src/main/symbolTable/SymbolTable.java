@@ -52,7 +52,7 @@ public class SymbolTable {
         items.put(item.getKey(), item);
     }
 
-    public SymbolTableItem getItem(String key) throws ItemNotFoundException {
+    public SymbolTableItem getItem(String key, boolean b) throws ItemNotFoundException {
         Set<SymbolTable> visitedSymbolTables = new HashSet<>();
         SymbolTable currentSymbolTable = this;
         while((currentSymbolTable != null) && (!visitedSymbolTables.contains(currentSymbolTable))) {
