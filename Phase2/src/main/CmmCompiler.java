@@ -1,8 +1,9 @@
 package main;
 
+import main.grammar.CmmLexer;
+import main.grammar.CmmParser;
 import main.visitor.name.ASTTreePrinter;
 import main.visitor.name.SymbolTableVisitor;
-import parsers.*;
 import main.ast.nodes.Program;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -15,13 +16,15 @@ public class CmmCompiler {
 
         Program program = cmmParser.cmm().cmmProgram;
 
-        CmmErrors cmmErrors = new CmmErrors();
-        program.accept(new SymbolTableVisitor());
+//        CmmErrors cmmErrors = new CmmErrors();
+//        program.accept(new SymbolTableVisitor());
+//
+//        if(cmmErrors.hasErrors())
+//            cmmErrors.printErrors();
+//        else
 
-        if(cmmErrors.hasErrors())
-            cmmErrors.printErrors();
-        else
             program.accept(new ASTTreePrinter());
+//        System.out.println(program.getMain());
 
     }
 }

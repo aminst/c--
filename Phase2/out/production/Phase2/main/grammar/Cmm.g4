@@ -25,6 +25,7 @@ program returns[Program programRet]:
     (f = functionDeclaration {$programRet.addFunction($f.functionDeclarationRet);})*
     m = main {$programRet.setMain($m.mainRet);};
 
+
 main returns[MainDeclaration mainRet]:
     {$mainRet = new MainDeclaration();}
     MAIN {$mainRet.setLine($MAIN.getLine());}
@@ -37,7 +38,7 @@ structDeclaration returns[StructDeclaration structDeclarationRet]:
     STRUCT {$structDeclarationRet.setLine($STRUCT.getLine());}
     identifier {$structDeclarationRet.setStructName($identifier.identifierRet);}
     (
-        (BEGIN structBody NEWLINE+ END) {$structDeclarationRet.setBody($structBody.structBodyRet);}
+        (BEGIN structBody NEWLINE+ END) {$structBody.structBodyRet.setLine($BEGIN.getLine()); $structDeclarationRet.setBody($structBody.structBodyRet); }
         |
         (NEWLINE+ singleStatementStructBody SEMICOLON?) {$structDeclarationRet.setBody($singleStatementStructBody.singleStatementStructBodyRet);}
     )
@@ -46,7 +47,7 @@ structDeclaration returns[StructDeclaration structDeclarationRet]:
 singleVarWithGetAndSet returns [SetGetVarDeclaration singleVarWithGetAndSetRet]:
     {$singleVarWithGetAndSetRet = new SetGetVarDeclaration();}
     type {$singleVarWithGetAndSetRet.setVarType($type.typeRet);}
-    identifier {$singleVarWithGetAndSetRet.setVarName($identifier.identifierRet);}
+    identifier {$singleVarWithGetAndSetRet.setLine($identifier.identifierRet.getLine()); $singleVarWithGetAndSetRet.setVarName($identifier.identifierRet);}
     functionArgsDec {$singleVarWithGetAndSetRet.setArgs($functionArgsDec.functionArgsDecRet);}
     BEGIN NEWLINE+
     setBody {$singleVarWithGetAndSetRet.setSetterBody($setBody.setBodyRet);}
@@ -60,6 +61,7 @@ singleStatementStructBody returns [Statement singleStatementStructBodyRet]:
     ;
 
 structBody returns [BlockStmt structBodyRet]:
+    {$structBodyRet = new BlockStmt();}
     (
         NEWLINE+
         (singleStatementStructBody SEMICOLON {$structBodyRet.addStatement($singleStatementStructBody.singleStatementStructBodyRet);})*
@@ -74,6 +76,7 @@ setBody returns [Statement setBodyRet]:
     SET body {$setBodyRet = $body.bodyRet;} NEWLINE+;
 
 functionDeclaration returns[FunctionDeclaration functionDeclarationRet]:
+    {$functionDeclarationRet = new FunctionDeclaration();}
     (
         type {$functionDeclarationRet.setReturnType($type.typeRet);}
         |
@@ -87,6 +90,7 @@ functionDeclaration returns[FunctionDeclaration functionDeclarationRet]:
     NEWLINE+;
 
 functionArgsDec returns [ArrayList<VariableDeclaration> functionArgsDecRet] locals [VariableDeclaration var]:
+    {$functionArgsDecRet = new ArrayList<VariableDeclaration>();}
     LPAR
     (
         fType = type fIdentifier = identifier
@@ -105,6 +109,7 @@ functionArgsDec returns [ArrayList<VariableDeclaration> functionArgsDecRet] loca
     RPAR ;
 
 functionArguments returns [ArrayList<Expression> functionArgumentsRet]:
+    {$functionArgumentsRet = new ArrayList<Expression>();}
     (
         expression {$functionArgumentsRet.add($expression.expressionRet);}
         (
@@ -131,7 +136,7 @@ loopCondBody returns [Statement loopCondBodyRet]:
      );
 
 blockStatement returns [BlockStmt blockStatementRet]:
-    BEGIN {$blockStatementRet.setLine($BEGIN.getLine());}
+    BEGIN {$blockStatementRet = new BlockStmt(); $blockStatementRet.setLine($BEGIN.getLine());}
     (
         NEWLINE+
         (singleStatement SEMICOLON {$blockStatementRet.addStatement($singleStatement.singleStatementRet);})*
@@ -145,6 +150,7 @@ varDecStatement returns [VarDecStmt varDecStatementRet] locals [VariableDeclarat
     identifier
     {$var = new VariableDeclaration($identifier.identifierRet, $type.typeRet);
      $var.setLine($identifier.identifierRet.getLine());
+     $varDecStatementRet.setLine($identifier.identifierRet.getLine());
     }
     (
         ASSIGN orExpression
@@ -165,7 +171,6 @@ varDecStatement returns [VarDecStmt varDecStatementRet] locals [VariableDeclarat
     )*
     ;
 
-//todo
 functionCallStmt returns [FunctionCallStmt functionCallStmtRet] locals [FunctionCall fc, Expression e]:
      otherExpression {$e = $otherExpression.otherExpressionRet;}
      (
