@@ -17,6 +17,7 @@ import main.symbolTable.items.FunctionSymbolTableItem;
 import main.symbolTable.items.StructSymbolTableItem;
 import main.symbolTable.items.VariableSymbolTableItem;
 import main.visitor.Visitor;
+import java.util.*;
 
 public class SymbolTableVisitor extends Visitor<Void> {
 
@@ -25,6 +26,9 @@ public class SymbolTableVisitor extends Visitor<Void> {
         SymbolTable root = new SymbolTable();
         SymbolTable.root = root;
         SymbolTable.push(root);
+
+        List<StructDeclaration> slist = new ArrayList<>();
+        List<FunctionDeclaration> flist = new ArrayList<>();
 
         for (StructDeclaration structDeclaration: program.getStructs()) {
             StructSymbolTableItem s = new StructSymbolTableItem(structDeclaration);
@@ -51,8 +55,7 @@ public class SymbolTableVisitor extends Visitor<Void> {
             SymbolTable sst = new SymbolTable(root);
             s.setStructSymbolTable(sst);
             SymbolTable.push(sst);
-            structDeclaration.accept(this);
-            SymbolTable.pop();
+            slist.add(structDeclaration);
         }
 
         for (FunctionDeclaration functionDeclaration:program.getFunctions()) {
@@ -86,7 +89,15 @@ public class SymbolTableVisitor extends Visitor<Void> {
             SymbolTable fst = new SymbolTable(root);
             f.setFunctionSymbolTable(fst);
             SymbolTable.push(fst);
-            functionDeclaration.accept(this);
+            flist.add(functionDeclaration);
+        }
+
+        for (FunctionDeclaration f : flist) {
+            f.accept(this);
+            SymbolTable.pop();
+        }
+        for (StructDeclaration s : slist) {
+            s.accept(this);
             SymbolTable.pop();
         }
 
@@ -142,12 +153,12 @@ public class SymbolTableVisitor extends Visitor<Void> {
         }
         try {
             symbolTable.getItem(StructSymbolTableItem.START_KEY + variableDec.getVarName().getName(), true);
-            CmmErrors.addError("Line " + variableDec.getLine()+": Name of Variable " + variableDec.getVarName().getName() + " conflicts with a struct's name");
+            CmmErrors.addError("Line " + variableDec.getLine()+": Name of variable " + variableDec.getVarName().getName() + " conflicts with a struct's name");
         }
         catch (ItemNotFoundException e1) {}
         try {
             symbolTable.getItem(FunctionSymbolTableItem.START_KEY + variableDec.getVarName().getName(), true);
-            CmmErrors.addError("Line " + variableDec.getLine()+": Name of Variable " + variableDec.getVarName().getName() + " conflicts with a functions's name");
+            CmmErrors.addError("Line " + variableDec.getLine()+": Name of variable " + variableDec.getVarName().getName() + " conflicts with a functions's name");
         }
         catch (ItemNotFoundException e2) {}
         try {
@@ -175,12 +186,12 @@ public class SymbolTableVisitor extends Visitor<Void> {
         }
         try {
             symbolTable.getItem(StructSymbolTableItem.START_KEY + setGetVarDec.getVarName().getName(), true);
-            CmmErrors.addError("Line " + setGetVarDec.getLine()+": Name of Variable " + setGetVarDec.getVarName().getName() + " conflicts with a struct's name");
+            CmmErrors.addError("Line " + setGetVarDec.getLine()+": Name of variable " + setGetVarDec.getVarName().getName() + " conflicts with a struct's name");
         }
         catch (ItemNotFoundException e1) {}
         try {
             symbolTable.getItem(FunctionSymbolTableItem.START_KEY + setGetVarDec.getVarName().getName(), true);
-            CmmErrors.addError("Line " + setGetVarDec.getLine()+": Name of Variable " + setGetVarDec.getVarName().getName() + " conflicts with a functions's name");
+            CmmErrors.addError("Line " + setGetVarDec.getLine()+": Name of variable " + setGetVarDec.getVarName().getName() + " conflicts with a functions's name");
         }
         catch (ItemNotFoundException e2) {}
         try {
@@ -211,11 +222,12 @@ public class SymbolTableVisitor extends Visitor<Void> {
         conditionalStmt.getCondition().accept(this);
         conditionalStmt.getThenBody().accept(this);
         SymbolTable.pop();
-        SymbolTable symbolTable1 = SymbolTable.top;
-        if (conditionalStmt.getElseBody() != null)
+        SymbolTable symbolTable1 = new SymbolTable(SymbolTable.top);
+        if (conditionalStmt.getElseBody() != null) {
             SymbolTable.push(symbolTable1);
             conditionalStmt.getElseBody().accept(this);
             SymbolTable.pop();
+        }
         return null;
     }
 
