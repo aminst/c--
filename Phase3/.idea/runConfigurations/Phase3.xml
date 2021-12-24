@@ -1,8 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="sample1" type="Application" factoryName="Application">
+  <configuration default="false" name="Phase3" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
     <option name="MAIN_CLASS_NAME" value="main.Cmm" />
     <module name="Phase3" />
-    <option name="PROGRAM_PARAMETERS" value="samples\sample1.cmm" />
+    <option name="PROGRAM_PARAMETERS" value="samples/sample1.cmm" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
