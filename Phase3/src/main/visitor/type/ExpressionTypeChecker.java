@@ -1,23 +1,17 @@
 package main.visitor.type;
 
-import main.ast.nodes.Node;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.operators.BinaryOperator;
-import main.ast.nodes.expression.values.primitive.BoolValue;
-import main.ast.nodes.expression.values.primitive.IntValue;
-import main.ast.types.FptrType;
-import main.ast.types.ListType;
-import main.ast.types.NoType;
-import main.ast.types.Type;
-import main.ast.types.primitives.BoolType;
-import main.ast.types.primitives.IntType;
-import main.ast.types.primitives.VoidType;
-import main.compileError.typeError.LeftSideNotLvalue;
-import main.compileError.typeError.UnsupportedOperandType;
+import main.ast.nodes.expression.operators.*;
+import main.ast.nodes.expression.values.primitive.*;
+import main.ast.types.*;
+import main.ast.types.primitives.*;
+import main.compileError.typeError.*;
+import main.symbolTable.SymbolTable;
+import main.symbolTable.exceptions.ItemNotFoundException;
+import main.symbolTable.items.*;
 import main.visitor.Visitor;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ExpressionTypeChecker extends Visitor<Type> {
 
@@ -132,8 +126,31 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(UnaryExpression unaryExpression) {
-        //Todo
-        return null;
+        this.isLVal = true;
+        Type t = unaryExpression.getOperand().accept(this);
+        UnaryOperator unaryOperator = unaryExpression.getOperator();
+        if(unaryOperator == UnaryOperator.not) {
+            if(t instanceof NoType)
+                return new NoType();
+            if(t instanceof BoolType)
+                return new BoolType();
+            else {
+                unaryExpression.addError(new UnsupportedOperandType(unaryExpression.getLine(), unaryOperator.toString()));
+                return new NoType();
+            }
+        }
+        else if(unaryOperator == UnaryOperator.minus) {
+            if(t instanceof NoType)
+                return new NoType();
+            if(t instanceof IntType)
+                return new IntType();
+            else {
+                unaryExpression.addError(new UnsupportedOperandType(unaryExpression.getLine(), unaryOperator.toString()));
+                return new NoType();
+            }
+        }
+        unaryExpression.addError(new UnsupportedOperandType(unaryExpression.getLine(), unaryOperator.toString()));
+        return new NoType();
     }
 
     @Override
@@ -144,14 +161,35 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(Identifier identifier) {
-        //Todo
-        return null;
+        try {
+            SymbolTableItem symbolTableItem = SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + identifier.getName());
+            return ((VariableSymbolTableItem) symbolTableItem).getType();
+        } catch (ItemNotFoundException e) {
+            identifier.addError(new VarNotDeclared(identifier.getLine(), identifier.getName()));
+            return new NoType();
+        }
     }
 
     @Override
     public Type visit(ListAccessByIndex listAccessByIndex) {
-        //Todo
-        return null;
+        Type instanceType = listAccessByIndex.getInstance().accept(this);
+        boolean tempLVal = this.isLVal;
+        Type indexType = listAccessByIndex.getIndex().accept(this);
+        this.isLVal = tempLVal;
+        boolean returnNoType = false;
+        if (!(indexType instanceof IntType || indexType instanceof NoType)) {
+            listAccessByIndex.addError(new ListIndexNotInt(listAccessByIndex.getLine()));
+            returnNoType = true;
+        }
+        if (instanceType instanceof NoType)
+            return new NoType();
+        if (!(instanceType instanceof ListType)) {
+            listAccessByIndex.addError(new AccessByIndexOnNonList(listAccessByIndex.getLine()));
+            return new NoType();
+        }
+        if (returnNoType)
+            return new NoType();
+        return ((ListType) instanceType).getType();
     }
 
     @Override
@@ -162,8 +200,10 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(ListSize listSize) {
-        //Todo
-        return null;
+        Type t = listSize.getArg().accept(this);
+        if (!(t instanceof ListType))
+            return new IntType();
+        return new NoType();
     }
 
     @Override
