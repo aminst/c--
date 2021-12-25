@@ -3,6 +3,7 @@ package main.visitor.type;
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.*;
 import main.ast.nodes.declaration.struct.*;
+import main.ast.nodes.expression.Identifier;
 import main.ast.nodes.expression.operators.BinaryOperator;
 import main.ast.nodes.statement.*;
 import main.ast.types.ListType;
@@ -11,6 +12,9 @@ import main.ast.types.Type;
 import main.ast.types.primitives.BoolType;
 import main.ast.types.primitives.IntType;
 import main.compileError.typeError.*;
+import main.symbolTable.SymbolTable;
+import main.symbolTable.exceptions.ItemNotFoundException;
+import main.symbolTable.items.FunctionSymbolTableItem;
 import main.visitor.Visitor;
 
 import java.util.List;
@@ -19,6 +23,7 @@ public class TypeChecker extends Visitor<Void> {
     ExpressionTypeChecker expressionTypeChecker;
     private FunctionDeclaration currentFunction;
     static boolean inFuncCallSt = false;
+
 
     public void TypeChecker(){
         this.expressionTypeChecker = new ExpressionTypeChecker();
@@ -36,7 +41,24 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(FunctionDeclaration functionDec) {
-        //Todo
+        FunctionSymbolTableItem functionSymbolTableItem;
+        try {
+            functionSymbolTableItem = (FunctionSymbolTableItem) SymbolTable.top.getItem(FunctionSymbolTableItem.START_KEY+functionDec.getFunctionName());
+        } catch (ItemNotFoundException e) {
+            return null;
+        }
+        SymbolTable.push(functionSymbolTableItem.getFunctionSymbolTable());
+
+        currentFunction = functionDec;
+
+        // TODO: check for ok return type
+
+        for (VariableDeclaration varDec : functionDec.getArgs())
+            varDec.accept(this);
+
+        functionDec.getBody().accept(this);
+
+        // TODO: emtiazi checking for missing return for non void functions
         return null;
     }
 
