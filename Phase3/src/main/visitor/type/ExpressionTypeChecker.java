@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 public class ExpressionTypeChecker extends Visitor<Type> {
 
-    public boolean isLVal = false;
-    private FunctionDeclaration currentFunction;
+    public boolean isLVal = true;
+    public FunctionDeclaration currentFunction;
 
     public boolean isSubType(Type first, Type second) {
         if (first instanceof NoType)
@@ -29,9 +29,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         if (first instanceof ListType && second instanceof ListType) {
             Type t1 = ((ListType) first).getType();
             Type t2 = ((ListType) first).getType();
-            if(!isSubType(t1,t2))
-                return false;
-            return true;
+            return isSubType(t1, t2);
         }
         if (first instanceof FptrType && second instanceof FptrType) {
             Type t1 = ((FptrType) first).getReturnType();
@@ -128,7 +126,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(UnaryExpression unaryExpression) {
-        this.isLVal = true;
+        this.isLVal = false;
         Type t = unaryExpression.getOperand().accept(this);
         UnaryOperator unaryOperator = unaryExpression.getOperator();
         if(unaryOperator == UnaryOperator.not) {
@@ -157,8 +155,38 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(FunctionCall funcCall) {
-        //Todo
-        return null;
+        this.isLVal = false;
+        Type instanceType = funcCall.getInstance().accept(this);
+        if (instanceType instanceof FptrType fptr) {
+            boolean hasError = false;
+            if (fptr.getReturnType() instanceof VoidType && !TypeChecker.inFuncCallSt) {
+                funcCall.addError(new CantUseValueOfVoidFunction(funcCall.getLine()));
+                hasError = true;
+            }
+            ArrayList<Type> fptrArgs = fptr.getArgsType();
+            ArrayList<Expression> callArgs = funcCall.getArgs();
+            ArrayList<Type> callTypes = new ArrayList<>();
+            for (Expression exp : callArgs)
+                callTypes.add(exp.accept(this));
+            if (fptrArgs.size() != callArgs.size()) {
+                funcCall.addError(new ArgsInFunctionCallNotMatchDefinition(funcCall.getLine()));
+                return new NoType();
+            }
+            for (int i = 0; i < fptrArgs.size(); i++)
+                if (!isSubType(callTypes.get(i), fptrArgs.get(i))) {
+                    funcCall.addError(new ArgsInFunctionCallNotMatchDefinition(funcCall.getLine()));
+                    return new NoType();
+                }
+            if (hasError)
+                return new NoType();
+            return fptr.getReturnType();
+        }
+        else if (instanceType instanceof NoType)
+            return new NoType();
+        else {
+            funcCall.addError(new CallOnNoneFptrType(funcCall.getLine()));
+            return new NoType();
+        }
     }
 
     @Override
@@ -199,12 +227,42 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(StructAccess structAccess) {
-        //Todo
-        return null;
+        this.isLVal = true;
+        Type instanceType = structAccess.getInstance().accept(this);
+        if (instanceType instanceof NoType)
+            return new NoType();
+        else if (instanceType instanceof StructType structType) {
+            SymbolTable structSymbolTable;
+            try {
+                structSymbolTable = ((StructSymbolTableItem) SymbolTable.root.getItem(StructSymbolTableItem.START_KEY+structType.getStructName().getName())).getStructSymbolTable();
+            }
+            catch (ItemNotFoundException e1) {
+                structAccess.addError(new StructNotDeclared(structAccess.getLine(),structAccess.getInstance().toString()));
+                return new NoType();
+            }
+            try {
+                VariableSymbolTableItem temp = (VariableSymbolTableItem) structSymbolTable.getItem(VariableSymbolTableItem.START_KEY+structAccess.getElement().getName());
+                return temp.getType();
+            }
+            catch (ItemNotFoundException e2) {
+                try {
+                    FunctionSymbolTableItem func_tmp = (FunctionSymbolTableItem) structSymbolTable.getItem(FunctionSymbolTableItem.START_KEY+structAccess.getElement().getName());
+                    this.isLVal = false;
+                    return new FptrType(func_tmp.getArgTypes(), func_tmp.getReturnType());
+                }
+                catch (ItemNotFoundException e3) {
+                    structAccess.addError(new StructMemberNotFound(structAccess.getLine(),structType.getStructName().getName(),structAccess.getElement().getName()));
+                    return new NoType();
+                }
+            }
+        }
+        structAccess.addError(new AccessOnNonStruct(structAccess.getLine()));
+        return new NoType();
     }
 
     @Override
     public Type visit(ListSize listSize) {
+        this.isLVal = false;
         Type t = listSize.getArg().accept(this);
         if (!(t instanceof ListType)) {
             listSize.addError(new GetSizeOfNonList(listSize.getLine()));
@@ -215,8 +273,19 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(ListAppend listAppend) {
-        //Todo
-        return null;
+        this.isLVal = false;
+        Type tList = listAppend.getListArg().accept(this);
+        Type tElement = listAppend.getElementArg().accept(this);
+        if (!(tList instanceof ListType || tList instanceof NoType)) {
+            listAppend.addError(new AppendToNonList(listAppend.getLine()));
+            return new NoType();
+        }
+        ListType listType = (ListType) tList;
+        if (!isSubType(tElement, listType.getType())) {
+            listAppend.addError(new NewElementTypeNotMatchListType(listAppend.getLine()));
+            return new NoType();
+        }
+        return new VoidType();
     }
 
     @Override
@@ -227,13 +296,13 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(IntValue intValue) {
-        this.isLVal = true;
+        this.isLVal = false;
         return new IntType();
     }
 
     @Override
     public Type visit(BoolValue boolValue) {
-        this.isLVal = true;
+        this.isLVal = false;
         return new BoolType();
     }
 }
