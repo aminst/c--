@@ -136,8 +136,6 @@ public class TypeChecker extends Visitor<Void> {
     @Override
     public Void visit(ListSizeStmt listSizeStmt) {
         Type argType = listSizeStmt.getListSizeExpr().accept(expressionTypeChecker);
-        if (!(argType instanceof ListType || argType instanceof NoType))
-            listSizeStmt.addError(new GetSizeOfNonList(listSizeStmt.getLine()));
         return null;
     }
 }

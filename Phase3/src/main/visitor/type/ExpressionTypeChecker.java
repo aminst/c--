@@ -1,5 +1,6 @@
 package main.visitor.type;
 
+import main.ast.nodes.declaration.FunctionDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.operators.*;
 import main.ast.nodes.expression.values.primitive.*;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 public class ExpressionTypeChecker extends Visitor<Type> {
 
     public boolean isLVal = false;
+    private FunctionDeclaration currentFunction;
 
     public boolean isSubType(Type first, Type second) {
         if (first instanceof NoType)
@@ -162,12 +164,15 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     @Override
     public Type visit(Identifier identifier) {
         try {
-            SymbolTableItem symbolTableItem = SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + identifier.getName());
-            return ((VariableSymbolTableItem) symbolTableItem).getType();
+            FunctionSymbolTableItem functionSymbolTableItem = (FunctionSymbolTableItem) SymbolTable.root.getItem(FunctionSymbolTableItem.START_KEY + this.currentFunction.getFunctionName().getName());
+            SymbolTable functionSymbolTable = functionSymbolTableItem.getFunctionSymbolTable();
+            VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) functionSymbolTable.getItem(VariableSymbolTableItem.START_KEY + identifier.getName());
+            return variableSymbolTableItem.getType();
         } catch (ItemNotFoundException e) {
             identifier.addError(new VarNotDeclared(identifier.getLine(), identifier.getName()));
             return new NoType();
         }
+
     }
 
     @Override
@@ -201,8 +206,10 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     @Override
     public Type visit(ListSize listSize) {
         Type t = listSize.getArg().accept(this);
-        if (!(t instanceof ListType))
+        if (!(t instanceof ListType)) {
+            listSize.addError(new GetSizeOfNonList(listSize.getLine()));
             return new IntType();
+        }
         return new NoType();
     }
 
