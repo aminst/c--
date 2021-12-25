@@ -6,17 +6,21 @@ import main.ast.nodes.declaration.struct.*;
 import main.ast.nodes.expression.Identifier;
 import main.ast.nodes.expression.operators.BinaryOperator;
 import main.ast.nodes.statement.*;
-import main.ast.types.ListType;
-import main.ast.types.NoType;
-import main.ast.types.Type;
+import main.ast.types.*;
 import main.ast.types.primitives.BoolType;
 import main.ast.types.primitives.IntType;
+import main.compileError.CompileError;
 import main.compileError.typeError.*;
 import main.symbolTable.SymbolTable;
+import main.symbolTable.exceptions.ItemAlreadyExistsException;
 import main.symbolTable.exceptions.ItemNotFoundException;
 import main.symbolTable.items.FunctionSymbolTableItem;
+import main.symbolTable.items.StructSymbolTableItem;
+import main.symbolTable.items.SymbolTableItem;
+import main.symbolTable.items.VariableSymbolTableItem;
 import main.visitor.Visitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TypeChecker extends Visitor<Void> {
@@ -51,7 +55,14 @@ public class TypeChecker extends Visitor<Void> {
 
         currentFunction = functionDec;
 
-        // TODO: check for ok return type
+        Type returnType = functionDec.getReturnType();
+        VariableDeclaration test = new VariableDeclaration(new Identifier("fort_test"), returnType);
+        test.setLine(functionDec.getLine());
+        test.accept(this);
+        for (CompileError error : test.flushErrors()) {
+            functionDec.addError(error);
+            functionSymbolTableItem.setReturnType(new NoType());
+        }
 
         for (VariableDeclaration varDec : functionDec.getArgs())
             varDec.accept(this);
@@ -71,7 +82,115 @@ public class TypeChecker extends Visitor<Void> {
     @Override
     public Void visit(VariableDeclaration variableDec) {
         Type varType = variableDec.getVarType();
+        if (varType instanceof StructType) {
+            StructType structType = (StructType) varType;
+            try {
+                SymbolTable.root.getItem(StructSymbolTableItem.START_KEY + structType.getStructName());
+                try {
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    variableSymbolTableItem.setType(structType);
+                } catch (ItemNotFoundException e) {
+                    VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
+                    variableSymbolTableItem.setType(structType);
+                    try {
+                        SymbolTable.top.put(variableSymbolTableItem);
+                    } catch (ItemAlreadyExistsException e1) {
 
+                    }
+                }
+            }
+            catch (ItemNotFoundException e) {
+                variableDec.addError(new StructNotDeclared(variableDec.getLine(), structType.getStructName().toString()));
+                try {
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    variableSymbolTableItem.setType(new NoType());
+                } catch (ItemNotFoundException e1) {
+                    VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
+                    variableSymbolTableItem.setType(new NoType());
+                    try {
+                        SymbolTable.top.put(variableSymbolTableItem);
+                    } catch (ItemAlreadyExistsException e2) {
+                    }
+                }
+            }
+        }
+        if (varType instanceof FptrType) {
+            FptrType fptrType = (FptrType) varType;
+            boolean hasError = false;
+            for (Type type : fptrType.getArgsType()) {
+                VariableDeclaration test = new VariableDeclaration(new Identifier("for_test"), type);
+                test.setLine(variableDec.getLine());
+                test.accept(this);
+                if (test.flushErrors().size() > 0)
+                    hasError = true;
+            }
+            Type type = fptrType.getReturnType();
+            VariableDeclaration test = new VariableDeclaration(new Identifier("for_test"), type);
+            test.setLine(variableDec.getLine());
+            test.accept(this);
+            if (test.flushErrors().size() > 0)
+                hasError = true;
+            if (hasError) {
+                try {
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    variableSymbolTableItem.setType(new NoType());
+                } catch (ItemNotFoundException e1) {
+                    VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
+                    variableSymbolTableItem.setType(new NoType());
+                    try {
+                        SymbolTable.top.put(variableSymbolTableItem);
+                    } catch (ItemAlreadyExistsException e2) {
+                    }
+                }
+            } else {
+                try {
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    variableSymbolTableItem.setType(fptrType);
+                } catch (ItemNotFoundException e1) {
+                    VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
+                    variableSymbolTableItem.setType(fptrType);
+                    try {
+                        SymbolTable.top.put(variableSymbolTableItem);
+                    } catch (ItemAlreadyExistsException e2) {
+                    }
+                }
+            }
+        }
+        if (varType instanceof ListType) {
+            ListType listType = (ListType) varType;
+            Type type = listType.getType();
+            VariableDeclaration test = new VariableDeclaration(new Identifier("for_test"), type);
+            test.setLine(variableDec.getLine());
+            test.accept(this);
+            if (test.flushErrors().size() > 0) {
+                try {
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    variableSymbolTableItem.setType(new NoType());
+                } catch (ItemNotFoundException e1) {
+                    VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
+                    variableSymbolTableItem.setType(new NoType());
+                    try {
+                        SymbolTable.top.put(variableSymbolTableItem);
+                    } catch (ItemAlreadyExistsException e2) {
+
+                    }
+                }
+            }
+            else {
+                try {
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    variableSymbolTableItem.setType(listType);
+                } catch (ItemNotFoundException e1) {
+                    VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
+                    variableSymbolTableItem.setType(listType);
+                    try {
+                        SymbolTable.top.put(variableSymbolTableItem);
+                    } catch (ItemAlreadyExistsException e2) {
+
+                    }
+                }
+            }
+        }
         return null;
     }
 
