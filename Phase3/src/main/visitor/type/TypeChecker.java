@@ -117,7 +117,10 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(LoopStmt loopStmt) {
-        //Todo
+        Type loopConditionType = loopStmt.getCondition().accept(expressionTypeChecker);
+        if (!(loopConditionType instanceof NoType || loopConditionType instanceof BoolType))
+            loopStmt.addError(new ConditionNotBool(loopStmt.getLine()));
+        loopStmt.getBody().accept(this);
         return null;
     }
 
