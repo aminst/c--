@@ -132,13 +132,13 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(ListAppendStmt listAppendStmt) {
-        //Todo
+        listAppendStmt.getListAppendExpr().accept(expressionTypeChecker);
         return null;
     }
 
     @Override
     public Void visit(ListSizeStmt listSizeStmt) {
-        Type argType = listSizeStmt.getListSizeExpr().accept(expressionTypeChecker);
+        listSizeStmt.getListSizeExpr().accept(expressionTypeChecker);
         return null;
     }
 }
