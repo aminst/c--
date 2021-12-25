@@ -13,6 +13,8 @@ import main.ast.types.primitives.IntType;
 import main.compileError.typeError.*;
 import main.visitor.Visitor;
 
+import java.util.List;
+
 public class TypeChecker extends Visitor<Void> {
     ExpressionTypeChecker expressionTypeChecker;
     private FunctionDeclaration currentFunction;
@@ -42,7 +44,8 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(VariableDeclaration variableDec) {
-        //Todo
+        Type varType = variableDec.getVarType();
+
         return null;
     }
 
@@ -126,7 +129,9 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(VarDecStmt varDecStmt) {
-        //Todo
+        List<VariableDeclaration> varDecs = varDecStmt.getVars();
+        for (VariableDeclaration varDec : varDecs)
+            varDec.accept(this);
         return null;
     }
 

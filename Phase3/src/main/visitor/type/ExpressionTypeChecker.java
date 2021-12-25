@@ -290,8 +290,12 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(ExprInPar exprInPar) {
-        //Todo
-        return null;
+        this.isLVal = false;
+        for (Expression e : exprInPar.getInputs()) {
+            Type firstType = e.accept(this);
+            return firstType;
+        }
+        return new VoidType();
     }
 
     @Override
