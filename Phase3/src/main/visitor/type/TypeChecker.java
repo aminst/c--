@@ -55,6 +55,7 @@ public class TypeChecker extends Visitor<Void> {
         } catch (ItemNotFoundException e) {
             functionSymbolTableItem = new FunctionSymbolTableItem(functionDec);
             functionSymbolTableItem.setFunctionSymbolTable(new SymbolTable());
+            functionSymbolTableItem.setReturnType(functionDec.getReturnType());
 
             try {
                 SymbolTable.root.put(functionSymbolTableItem);
@@ -78,6 +79,7 @@ public class TypeChecker extends Visitor<Void> {
             varDec.accept(this);
 
         functionDec.getBody().accept(this);
+        SymbolTable.pop();
 
         // TODO: emtiazi checking for missing return for non void functions
         return null;
@@ -244,7 +246,9 @@ public class TypeChecker extends Visitor<Void> {
         if (insideGetterOrSetter)
             variableDec.addError(new CannotUseDefineVar(variableDec.getLine()));
         if (variableDec.getDefaultValue() != null) {
-            variableDec.getDefaultValue().accept(this.expressionTypeChecker);
+            Type defaultValueType = variableDec.getDefaultValue().accept(this.expressionTypeChecker);
+            if (!expressionTypeChecker.isSubType(defaultValueType, varType))
+                variableDec.addError(new UnsupportedOperandType(variableDec.getLine(), BinaryOperator.assign.toString()));
         }
         return null;
     }
