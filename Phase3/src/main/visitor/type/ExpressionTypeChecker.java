@@ -21,6 +21,8 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     public boolean isSubType(Type first, Type second) {
         if (first instanceof NoType)
             return true;
+        if (first instanceof VoidType && second instanceof VoidType)
+            return true;
         if (first instanceof BoolType && second instanceof BoolType)
             return true;
         if (first instanceof IntType && second instanceof IntType)
@@ -249,6 +251,8 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             }
             try {
                 VariableSymbolTableItem temp = (VariableSymbolTableItem) structSymbolTable.getItem(VariableSymbolTableItem.START_KEY+structAccess.getElement().getName());
+                System.out.println(temp.getName());
+                System.out.println(temp.getType());
                 return temp.getType();
             }
             catch (ItemNotFoundException e2) {

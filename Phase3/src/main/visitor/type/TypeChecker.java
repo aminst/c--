@@ -336,7 +336,6 @@ public class TypeChecker extends Visitor<Void> {
         if (insideMainOrSetter)
         {
             returnStmt.addError(new CannotUseReturn(returnStmt.getLine()));
-            return null;
         }
         if (returnStmt.getReturnedExpr() == null)
             return null;
@@ -347,7 +346,7 @@ public class TypeChecker extends Visitor<Void> {
             returnStmt.addError(new CantUseValueOfVoidFunction(returnStmt.getLine()));
             return null;
         }
-        if (!(expressionTypeChecker.isSubType(return_type_value, func_return_type)))
+        if (!(expressionTypeChecker.isSubType(return_type_value, func_return_type)) && !insideMainOrSetter)
             returnStmt.addError(new ReturnValueNotMatchFunctionReturnType(returnStmt.getLine()));
         return null;
     }
