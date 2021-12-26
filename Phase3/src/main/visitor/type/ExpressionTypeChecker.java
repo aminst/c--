@@ -251,8 +251,6 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             }
             try {
                 VariableSymbolTableItem temp = (VariableSymbolTableItem) structSymbolTable.getItem(VariableSymbolTableItem.START_KEY+structAccess.getElement().getName());
-                System.out.println(temp.getName());
-                System.out.println(temp.getType());
                 return temp.getType();
             }
             catch (ItemNotFoundException e2) {

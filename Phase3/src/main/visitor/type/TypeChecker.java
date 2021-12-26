@@ -37,10 +37,10 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(Program program) {
-        for (FunctionDeclaration functionDec : program.getFunctions())
-            functionDec.accept(this);
         for (StructDeclaration structDec : program.getStructs())
             structDec.accept(this);
+        for (FunctionDeclaration functionDec : program.getFunctions())
+            functionDec.accept(this);
         program.getMain().accept(this);
         return null;
     }
@@ -251,7 +251,14 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(StructDeclaration structDec) {
-        structDec.getBody().accept(this);
+        try {
+            StructSymbolTableItem structSymbolTableItem  = (StructSymbolTableItem) SymbolTable.root.getItem(StructSymbolTableItem.START_KEY + structDec.getStructName().getName());
+            SymbolTable.push(structSymbolTableItem.getStructSymbolTable());
+            structDec.getBody().accept(this);
+            SymbolTable.pop();
+        }
+        catch (ItemNotFoundException e) {
+        }
         return null;
     }
 
