@@ -250,17 +250,6 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(StructDeclaration structDec) {
-//        try {
-//            SymbolTable.root.getItem(StructSymbolTableItem.START_KEY + structDec.getStructName());
-//            System.out.println("HIIIIIII1");
-//        } catch (ItemNotFoundException e) {
-//            StructSymbolTableItem structSymbolTableItem = new StructSymbolTableItem(structDec);
-//            try {
-//                SymbolTable.root.put(structSymbolTableItem);
-//            } catch (ItemAlreadyExistsException e1) {
-//                System.out.println("HIIIIIII2");
-//            }
-//        }
         structDec.getBody().accept(this);
         return null;
     }
