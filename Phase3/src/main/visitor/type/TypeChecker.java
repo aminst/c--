@@ -9,6 +9,7 @@ import main.ast.nodes.statement.*;
 import main.ast.types.*;
 import main.ast.types.primitives.BoolType;
 import main.ast.types.primitives.IntType;
+import main.ast.types.primitives.VoidType;
 import main.compileError.CompileError;
 import main.compileError.typeError.*;
 import main.symbolTable.SymbolTable;
@@ -298,12 +299,20 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(ConditionalStmt conditionalStmt) {
+        SymbolTable ifScope = new SymbolTable(SymbolTable.top);
+        SymbolTable.push(ifScope);
         Type condition_type = conditionalStmt.getCondition().accept(expressionTypeChecker);
         if (!(condition_type instanceof NoType || condition_type instanceof BoolType))
             conditionalStmt.addError(new ConditionNotBool(conditionalStmt.getLine()));
         conditionalStmt.getThenBody().accept(this);
+        SymbolTable.pop();
         if (conditionalStmt.getElseBody() != null)
+        {
+            SymbolTable elseScope = new SymbolTable(SymbolTable.top);
+            SymbolTable.push(elseScope);
             conditionalStmt.getElseBody().accept(this);
+            SymbolTable.pop();
+        }
         return null;
     }
 
@@ -328,10 +337,16 @@ public class TypeChecker extends Visitor<Void> {
         if (insideMainOrSetter)
         {
             returnStmt.addError(new CannotUseReturn(returnStmt.getLine()));
-            return null;
         }
+        if (returnStmt.getReturnedExpr() == null)
+            return null;
         Type return_type_value = returnStmt.getReturnedExpr().accept(expressionTypeChecker);
         Type func_return_type = currentFunction.getReturnType();
+        if (return_type_value instanceof VoidType)
+        {
+            returnStmt.addError(new CantUseValueOfVoidFunction(returnStmt.getLine()));
+            return null;
+        }
         if (!(expressionTypeChecker.isSubType(return_type_value, func_return_type)))
             returnStmt.addError(new ReturnValueNotMatchFunctionReturnType(returnStmt.getLine()));
         return null;

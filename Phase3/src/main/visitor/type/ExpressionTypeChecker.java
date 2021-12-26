@@ -72,8 +72,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             if(lType instanceof IntType && rType instanceof IntType)
                 return new BoolType();
 
-            if((lType instanceof NoType && rType instanceof NoType) || (lType instanceof IntType && rType instanceof NoType) ||
-                    (lType instanceof NoType && rType instanceof IntType))
+            if (lType instanceof NoType || rType instanceof NoType)
                 return new NoType();
 
             binaryExpression.addError(new UnsupportedOperandType(binaryExpression.getLine(), binaryOperator.toString()));
@@ -92,12 +91,12 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             return new NoType();
         }
         if (binaryOperator == BinaryOperator.or || binaryOperator == BinaryOperator.and) {
-            if(lType instanceof IntType && rType instanceof IntType)
+            if(lType instanceof BoolType && rType instanceof BoolType)
                 return new BoolType();
 
-//            if((lType instanceof NoType && rType instanceof NoType) || (lType instanceof IntType && rType instanceof NoType) ||
-//                    (lType instanceof NoType && rType instanceof IntType))
-//                return new NoType();
+
+            if (lType instanceof NoType || rType instanceof NoType)
+                return new NoType();
 
             binaryExpression.addError(new UnsupportedOperandType(binaryExpression.getLine(), binaryOperator.toString()));
             return new NoType();
@@ -156,6 +155,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     public Type visit(FunctionCall funcCall) {
         this.isLVal = false;
         Type instanceType = funcCall.getInstance().accept(this);
+
         if (instanceType instanceof FptrType fptr) {
             boolean hasError = false;
             if (fptr.getReturnType() instanceof VoidType && !TypeChecker.inFuncCallSt) {
@@ -171,11 +171,17 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 funcCall.addError(new ArgsInFunctionCallNotMatchDefinition(funcCall.getLine()));
                 return new NoType();
             }
-            for (int i = 0; i < fptrArgs.size(); i++)
+            for (int i = 0; i < fptrArgs.size(); i++) {
+                if (callTypes.get(i) instanceof VoidType)
+                {
+                    funcCall.addError(new CantUseValueOfVoidFunction(funcCall.getLine()));
+                    return new NoType();
+                }
                 if (!isSubType(callTypes.get(i), fptrArgs.get(i))) {
                     funcCall.addError(new ArgsInFunctionCallNotMatchDefinition(funcCall.getLine()));
                     return new NoType();
                 }
+            }
             if (hasError)
                 return new NoType();
             return fptr.getReturnType();
@@ -278,10 +284,12 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         this.isLVal = false;
         Type tList = listAppend.getListArg().accept(this);
         Type tElement = listAppend.getElementArg().accept(this);
-        if (!(tList instanceof ListType || tList instanceof NoType)) {
+        if (!(tList instanceof ListType) && !(tList instanceof NoType)) {
             listAppend.addError(new AppendToNonList(listAppend.getLine()));
             return new NoType();
         }
+        if (tList instanceof NoType || tElement instanceof NoType)
+            return new NoType();
         ListType listType = (ListType) tList;
         if (!isSubType(tElement, listType.getType())) {
             listAppend.addError(new NewElementTypeNotMatchListType(listAppend.getLine()));
