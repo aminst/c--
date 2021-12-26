@@ -48,7 +48,7 @@ public class TypeChecker extends Visitor<Void> {
     public Void visit(FunctionDeclaration functionDec) {
         FunctionSymbolTableItem functionSymbolTableItem;
         try {
-            functionSymbolTableItem = (FunctionSymbolTableItem) SymbolTable.root.getItem(FunctionSymbolTableItem.START_KEY+functionDec.getFunctionName());
+            functionSymbolTableItem = (FunctionSymbolTableItem) SymbolTable.root.getItem(FunctionSymbolTableItem.START_KEY+functionDec.getFunctionName().getName());
             functionSymbolTableItem.setFunctionSymbolTable(new SymbolTable());
             functionSymbolTableItem.setReturnType(functionDec.getReturnType());
         } catch (ItemNotFoundException e) {
@@ -98,7 +98,7 @@ public class TypeChecker extends Visitor<Void> {
             try {
                 SymbolTable.root.getItem(StructSymbolTableItem.START_KEY + structType.getStructName().getName());
                 try {
-                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                     variableSymbolTableItem.setType(structType);
                 } catch (ItemNotFoundException e) {
                     VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
@@ -113,7 +113,7 @@ public class TypeChecker extends Visitor<Void> {
             catch (ItemNotFoundException e) {
                 variableDec.addError(new StructNotDeclared(variableDec.getLine(), structType.getStructName().getName()));
                 try {
-                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                     variableSymbolTableItem.setType(new NoType());
                 } catch (ItemNotFoundException e1) {
                     VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
@@ -147,7 +147,7 @@ public class TypeChecker extends Visitor<Void> {
             }
             if (hasError) {
                 try {
-                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                     variableSymbolTableItem.setType(new NoType());
                 } catch (ItemNotFoundException e1) {
                     VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
@@ -159,7 +159,7 @@ public class TypeChecker extends Visitor<Void> {
                 }
             } else {
                 try {
-                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                     variableSymbolTableItem.setType(fptrType);
                 } catch (ItemNotFoundException e1) {
                     VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
@@ -185,7 +185,7 @@ public class TypeChecker extends Visitor<Void> {
 
             if (hasError) {
                 try {
-                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                     variableSymbolTableItem.setType(new NoType());
                 } catch (ItemNotFoundException e1) {
                     VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
@@ -199,7 +199,7 @@ public class TypeChecker extends Visitor<Void> {
             }
             else {
                 try {
-                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                    VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                     variableSymbolTableItem.setType(listType);
                 } catch (ItemNotFoundException e1) {
                     VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
@@ -215,7 +215,7 @@ public class TypeChecker extends Visitor<Void> {
         if (varType instanceof IntType) {
             IntType intType = (IntType) varType;
             try {
-                VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                 variableSymbolTableItem.setType(intType);
             } catch (ItemNotFoundException e1) {
                 VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
@@ -229,7 +229,7 @@ public class TypeChecker extends Visitor<Void> {
         if (varType instanceof BoolType) {
             BoolType boolType = (BoolType) varType;
             try {
-                VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
+                VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName().getName());
                 variableSymbolTableItem.setType(boolType);
             } catch (ItemNotFoundException e1) {
                 VariableSymbolTableItem variableSymbolTableItem = new VariableSymbolTableItem(variableDec.getVarName());
