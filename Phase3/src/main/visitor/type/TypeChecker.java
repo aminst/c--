@@ -28,7 +28,7 @@ public class TypeChecker extends Visitor<Void> {
     private FunctionDeclaration currentFunction;
     static boolean inFuncCallSt = false;
     private boolean doesReturn = false;
-
+    private boolean doesDeclareVar = false;
 
     public void TypeChecker(){
         this.expressionTypeChecker = new ExpressionTypeChecker();
@@ -205,6 +205,7 @@ public class TypeChecker extends Visitor<Void> {
                 }
             }
         }
+        doesDeclareVar = true;
         return null;
     }
 
@@ -222,10 +223,13 @@ public class TypeChecker extends Visitor<Void> {
             arg.accept(this);
         }
         doesReturn = false;
+        doesDeclareVar = false;
         setGetVarDec.getSetterBody().accept(this);
         if (doesReturn)
-            setGetVarDec.addError(new CannotUseReturn(setGetVarDec.getLine()));
+            setGetVarDec.addError(new CannotUseReturn(setGetVarDec.getLine())); // is this line correct?
         setGetVarDec.getGetterBody().accept(this);
+        if (doesDeclareVar)
+            setGetVarDec.addError(new CannotUseDefineVar(setGetVarDec.getLine())); // is this line correct?
         return null;
     }
 
