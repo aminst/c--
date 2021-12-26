@@ -1,6 +1,4 @@
-void f() begin
-    int a
-end
 main() begin
-   t(i, j)
+    int a
+    (a) = 2
 end

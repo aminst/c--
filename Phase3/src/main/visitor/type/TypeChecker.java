@@ -95,11 +95,6 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(VariableDeclaration variableDec) {
-        if (insideGetterOrSetter)
-        {
-            variableDec.addError(new CannotUseDefineVar(variableDec.getLine()));
-            return null;
-        }
         Type varType = variableDec.getVarType();
         if (varType instanceof StructType) {
             StructType structType = (StructType) varType;
@@ -247,6 +242,11 @@ public class TypeChecker extends Visitor<Void> {
                 } catch (ItemAlreadyExistsException e2) {
                 }
             }
+        }
+        if (insideGetterOrSetter)
+        {
+            variableDec.addError(new CannotUseDefineVar(variableDec.getLine()));
+            return null;
         }
         if (variableDec.getDefaultValue() != null) {
             Type defaultValueType = variableDec.getDefaultValue().accept(this.expressionTypeChecker);
