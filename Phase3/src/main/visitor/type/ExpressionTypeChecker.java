@@ -94,8 +94,8 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             if(lType instanceof BoolType && rType instanceof BoolType)
                 return new BoolType();
 
-
-            if (lType instanceof NoType || rType instanceof NoType)
+            if((lType instanceof NoType && rType instanceof NoType) || (lType instanceof BoolType && rType instanceof NoType) ||
+                    (lType instanceof NoType && rType instanceof BoolType))
                 return new NoType();
 
             binaryExpression.addError(new UnsupportedOperandType(binaryExpression.getLine(), binaryOperator.toString()));
@@ -172,13 +172,12 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 return new NoType();
             }
             for (int i = 0; i < fptrArgs.size(); i++) {
-                if (callTypes.get(i) instanceof VoidType)
-                {
-                    funcCall.addError(new CantUseValueOfVoidFunction(funcCall.getLine()));
-                    return new NoType();
-                }
                 if (!isSubType(callTypes.get(i), fptrArgs.get(i))) {
                     funcCall.addError(new ArgsInFunctionCallNotMatchDefinition(funcCall.getLine()));
+                    return new NoType();
+                }
+                if (callTypes.get(i) instanceof VoidType) {
+                    funcCall.addError(new CantUseValueOfVoidFunction(funcCall.getLine()));
                     return new NoType();
                 }
             }

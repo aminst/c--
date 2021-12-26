@@ -260,7 +260,6 @@ public class TypeChecker extends Visitor<Void> {
         setGetVarDec.getVarDec().accept(this);
 
         insideGetterOrSetter = true;
-
         setGetVarDec.getGetterBody().accept(this);
 
         insideGetterOrSetter = false;
@@ -337,6 +336,7 @@ public class TypeChecker extends Visitor<Void> {
         if (insideMainOrSetter)
         {
             returnStmt.addError(new CannotUseReturn(returnStmt.getLine()));
+            return null;
         }
         if (returnStmt.getReturnedExpr() == null)
             return null;
