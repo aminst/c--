@@ -246,7 +246,6 @@ public class TypeChecker extends Visitor<Void> {
         if (insideGetterOrSetter)
         {
             variableDec.addError(new CannotUseDefineVar(variableDec.getLine()));
-            return null;
         }
         if (variableDec.getDefaultValue() != null) {
             Type defaultValueType = variableDec.getDefaultValue().accept(this.expressionTypeChecker);
