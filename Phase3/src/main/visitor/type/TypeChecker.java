@@ -75,7 +75,8 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(MainDeclaration mainDec) {
-        //Todo
+        mainDec.accept(this);
+        // TODO: check no return in main
         return null;
     }
 
@@ -121,15 +122,19 @@ public class TypeChecker extends Visitor<Void> {
                 VariableDeclaration test = new VariableDeclaration(new Identifier("for_test"), type);
                 test.setLine(variableDec.getLine());
                 test.accept(this);
-                if (test.flushErrors().size() > 0)
+                for (CompileError error : test.flushErrors()) {
                     hasError = true;
+                    variableDec.addError(error);
+                }
             }
             Type type = fptrType.getReturnType();
             VariableDeclaration test = new VariableDeclaration(new Identifier("for_test"), type);
             test.setLine(variableDec.getLine());
             test.accept(this);
-            if (test.flushErrors().size() > 0)
+            for (CompileError error : test.flushErrors()) {
                 hasError = true;
+                variableDec.addError(error);
+            }
             if (hasError) {
                 try {
                     VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
@@ -162,7 +167,13 @@ public class TypeChecker extends Visitor<Void> {
             VariableDeclaration test = new VariableDeclaration(new Identifier("for_test"), type);
             test.setLine(variableDec.getLine());
             test.accept(this);
-            if (test.flushErrors().size() > 0) {
+            boolean hasError = false;
+            for (CompileError error : test.flushErrors()) {
+                variableDec.addError(error);
+                hasError = true;
+            }
+
+            if (hasError) {
                 try {
                     VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + variableDec.getVarName());
                     variableSymbolTableItem.setType(new NoType());
@@ -196,13 +207,19 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(StructDeclaration structDec) {
-        //Todo
+        structDec.getBody().accept(this);
         return null;
     }
 
     @Override
     public Void visit(SetGetVarDeclaration setGetVarDec) {
-        //Todo
+        setGetVarDec.getVarDec().accept(this);
+
+        for (VariableDeclaration arg : setGetVarDec.getArgs()) {
+            arg.accept(this);
+        }
+        setGetVarDec.getSetterBody().accept(this);
+        setGetVarDec.getGetterBody().accept(this);
         return null;
     }
 
