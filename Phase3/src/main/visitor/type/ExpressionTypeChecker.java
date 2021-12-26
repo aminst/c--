@@ -29,7 +29,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             return true;
         if (first instanceof ListType && second instanceof ListType) {
             Type t1 = ((ListType) first).getType();
-            Type t2 = ((ListType) first).getType();
+            Type t2 = ((ListType) second).getType();
             return isSubType(t1, t2);
         }
         if (first instanceof FptrType && second instanceof FptrType) {

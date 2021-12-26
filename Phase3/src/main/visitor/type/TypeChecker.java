@@ -26,7 +26,7 @@ import java.util.List;
 
 public class TypeChecker extends Visitor<Void> {
     ExpressionTypeChecker expressionTypeChecker;
-    private FunctionDeclaration currentFunction;
+    private Type currentReturnType;
     static boolean inFuncCallSt = false;
     private boolean insideMainOrSetter = false;
     private boolean insideGetterOrSetter = false;
@@ -63,7 +63,7 @@ public class TypeChecker extends Visitor<Void> {
         }
         SymbolTable.push(functionSymbolTableItem.getFunctionSymbolTable());
 
-        currentFunction = functionDec;
+        currentReturnType = functionDec.getReturnType();
 
         Type returnType = functionDec.getReturnType();
         VariableDeclaration test = new VariableDeclaration(new Identifier("fort_test"), returnType);
@@ -264,8 +264,8 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(SetGetVarDeclaration setGetVarDec) {
+        currentReturnType = setGetVarDec.getVarType();
         setGetVarDec.getVarDec().accept(this);
-
         insideGetterOrSetter = true;
         setGetVarDec.getGetterBody().accept(this);
 
@@ -347,7 +347,7 @@ public class TypeChecker extends Visitor<Void> {
         if (returnStmt.getReturnedExpr() == null)
             return null;
         Type return_type_value = returnStmt.getReturnedExpr().accept(expressionTypeChecker);
-        Type func_return_type = currentFunction.getReturnType();
+        Type func_return_type = currentReturnType;
         if (return_type_value instanceof VoidType)
         {
             returnStmt.addError(new CantUseValueOfVoidFunction(returnStmt.getLine()));
