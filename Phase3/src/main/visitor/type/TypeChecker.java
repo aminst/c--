@@ -27,6 +27,7 @@ public class TypeChecker extends Visitor<Void> {
     ExpressionTypeChecker expressionTypeChecker;
     private FunctionDeclaration currentFunction;
     static boolean inFuncCallSt = false;
+    private boolean doesReturn = false;
 
 
     public void TypeChecker(){
@@ -75,8 +76,10 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(MainDeclaration mainDec) {
+        doesReturn = false;
         mainDec.accept(this);
-        // TODO: check no return in main
+        if (doesReturn)
+            mainDec.addError(new CannotUseReturn(mainDec.getLine()));
         return null;
     }
 
@@ -218,7 +221,10 @@ public class TypeChecker extends Visitor<Void> {
         for (VariableDeclaration arg : setGetVarDec.getArgs()) {
             arg.accept(this);
         }
+        doesReturn = false;
         setGetVarDec.getSetterBody().accept(this);
+        if (doesReturn)
+            setGetVarDec.addError(new CannotUseReturn(setGetVarDec.getLine()));
         setGetVarDec.getGetterBody().accept(this);
         return null;
     }
@@ -277,6 +283,7 @@ public class TypeChecker extends Visitor<Void> {
         Type func_return_type = currentFunction.getReturnType();
         if (!(expressionTypeChecker.isSubType(return_type_value, func_return_type)))
             returnStmt.addError(new ReturnValueNotMatchFunctionReturnType(returnStmt.getLine()));
+        doesReturn = true;
         return null;
     }
 
