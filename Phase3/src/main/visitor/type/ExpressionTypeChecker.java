@@ -17,7 +17,6 @@ import java.util.ArrayList;
 public class ExpressionTypeChecker extends Visitor<Type> {
 
     public boolean isLVal = true;
-    public FunctionDeclaration currentFunction;
 
     public boolean isSubType(Type first, Type second) {
         if (first instanceof NoType)
@@ -96,9 +95,9 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             if(lType instanceof IntType && rType instanceof IntType)
                 return new BoolType();
 
-            if((lType instanceof NoType && rType instanceof NoType) || (lType instanceof IntType && rType instanceof NoType) ||
-                    (lType instanceof NoType && rType instanceof IntType))
-                return new NoType();
+//            if((lType instanceof NoType && rType instanceof NoType) || (lType instanceof IntType && rType instanceof NoType) ||
+//                    (lType instanceof NoType && rType instanceof IntType))
+//                return new NoType();
 
             binaryExpression.addError(new UnsupportedOperandType(binaryExpression.getLine(), binaryOperator.toString()));
             return new NoType();
@@ -192,13 +191,16 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     @Override
     public Type visit(Identifier identifier) {
         try {
-            FunctionSymbolTableItem functionSymbolTableItem = (FunctionSymbolTableItem) SymbolTable.root.getItem(FunctionSymbolTableItem.START_KEY + this.currentFunction.getFunctionName().getName());
-            SymbolTable functionSymbolTable = functionSymbolTableItem.getFunctionSymbolTable();
-            VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) functionSymbolTable.getItem(VariableSymbolTableItem.START_KEY + identifier.getName());
-            return variableSymbolTableItem.getType();
+            FunctionSymbolTableItem functionSymbolTableItem = (FunctionSymbolTableItem) SymbolTable.root.getItem(FunctionSymbolTableItem.START_KEY + identifier.getName());
+            return new FptrType(functionSymbolTableItem.getArgTypes(), functionSymbolTableItem.getReturnType());
         } catch (ItemNotFoundException e) {
-            identifier.addError(new VarNotDeclared(identifier.getLine(), identifier.getName()));
-            return new NoType();
+            try {
+                VariableSymbolTableItem variableSymbolTableItem = (VariableSymbolTableItem) SymbolTable.top.getItem(VariableSymbolTableItem.START_KEY + identifier.getName());
+                return variableSymbolTableItem.getType();
+            } catch (ItemNotFoundException e1) {
+                identifier.addError(new VarNotDeclared(identifier.getLine(), identifier.getName()));
+                return new NoType();
+            }
         }
 
     }

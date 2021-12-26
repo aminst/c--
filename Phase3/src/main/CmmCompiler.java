@@ -1,9 +1,10 @@
 package main;
 
+import main.grammar.CmmLexer;
+import main.grammar.CmmParser;
 import main.visitor.*;
 import main.visitor.name.*;
 import main.visitor.type.*;
-import parsers.*;
 import main.ast.nodes.Program;
 import org.antlr.v4.runtime.*;
 import java.util.*;
