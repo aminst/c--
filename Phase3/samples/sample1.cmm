@@ -1,4 +1,7 @@
+void f() begin
+    int b
+end
+
 main() begin
-    int a
-    (a) = 2
+    f() = 2
 end
