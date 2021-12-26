@@ -1,3 +1,6 @@
+void f() begin
+    int a
+end
 main() begin
-    bool a = 3;
+   t(i, j)
 end
