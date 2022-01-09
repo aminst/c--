@@ -21,6 +21,8 @@ public class  CodeGenerator extends Visitor<String> {
     ExpressionTypeChecker expressionTypeChecker = new ExpressionTypeChecker();
     private String outputPath;
     private FileWriter currentFile;
+    private FunctionDeclaration currentFunction;
+    private int lastSlot = -1;
 
     private void copyFile(String toBeCopied, String toBePasted) {
         try {
@@ -95,8 +97,41 @@ public class  CodeGenerator extends Visitor<String> {
     }
 
     private int slotOf(String identifier) {
-        //todo
+        if (identifier.equals("")) {
+            if (lastSlot == -1)
+                lastSlot = currentFunction.getArgs().size();
+            lastSlot++;
+            return lastSlot;
+        }
+        int i = 1;
+        for (VariableDeclaration arg : currentFunction.getArgs()) {
+            if (arg.getVarName().getName().equals(identifier))
+                return i;
+            i++;
+        }
         return 0;
+    }
+
+    private String castToNonPrimitive(Type type) {
+        if (type instanceof IntType) {
+            return  "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
+        }
+        else if (type instanceof BoolType) {
+            return "invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;";
+        }
+
+        return null;
+    }
+
+    private String castToPrimitive(Type type) {
+        if (type instanceof IntType) {
+            return  "invokevirtual java/lang/Integer/intValue()I";
+        }
+        else if (type instanceof BoolType) {
+            return "invokevirtual java/lang/Boolean/booleanValue()Z";
+        }
+
+        return null;
     }
 
     @Override
@@ -235,8 +270,14 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(Identifier identifier){
-        //todo
-        return null;
+        String commands = "";
+        int slot = slotOf(identifier.getName());
+        commands += "aload " + String.valueOf(slot);
+        Type type = identifier.accept(expressionTypeChecker);
+        String castCmd = castToPrimitive(type);
+        if (castCmd != null)
+            commands += "\n" + castCmd;
+        return commands;
     }
 
     @Override
@@ -265,14 +306,20 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(IntValue intValue) {
-        //todo
-        return null;
+        String commands = "";
+        commands += "ldc " + String.valueOf(intValue.getConstant());
+        return commands;
     }
 
     @Override
     public String visit(BoolValue boolValue) {
-        //todo
-        return null;
+        String commands = "";
+        commands += "ldc ";
+        if (boolValue.getConstant())
+            commands += "1";
+        else
+            commands += "0";
+        return commands;
     }
 
     @Override
