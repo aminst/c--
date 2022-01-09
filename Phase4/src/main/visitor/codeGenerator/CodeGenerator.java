@@ -23,6 +23,7 @@ public class  CodeGenerator extends Visitor<String> {
     private FileWriter currentFile;
     private FunctionDeclaration currentFunction;
     private int lastSlot = -1;
+    private int lastLabel = 0;
 
     private void copyFile(String toBeCopied, String toBePasted) {
         try {
@@ -130,9 +131,15 @@ public class  CodeGenerator extends Visitor<String> {
         else if (type instanceof BoolType) {
             return "invokevirtual java/lang/Boolean/booleanValue()Z";
         }
-
         return null;
     }
+
+    private String newLabel() {
+        String label = "Label_" + lastLabel;
+        lastLabel++;
+        return label;
+    }
+
 
     @Override
     public String visit(Program program) {
@@ -147,6 +154,7 @@ public class  CodeGenerator extends Visitor<String> {
         program.getMain().accept(this);
 
         for (FunctionDeclaration functionDeclaration: program.getFunctions()){
+            currentFunction = functionDeclaration;
             functionDeclaration.accept(this);
         }
         return null;
@@ -167,7 +175,12 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(MainDeclaration mainDeclaration) {
-        //todo
+        String command = """
+                .class public Main
+                .super java/lang/Object
+                """;
+        addCommand(command);
+        addStaticMainMethod();
         return null;
     }
 
@@ -184,19 +197,34 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(AssignmentStmt assignmentStmt) {
-        //todo
+        BinaryExpression assignmentExp = new BinaryExpression(assignmentStmt.getLValue(),
+                assignmentStmt.getRValue(), BinaryOperator.assign);
+        addCommand(";Assign Statement");
+        addCommand(assignmentExp.accept(this));
+        addCommand("pop");
         return null;
     }
 
     @Override
     public String visit(BlockStmt blockStmt) {
-        //todo
+        for(Statement statement : blockStmt.getStatements())
+            statement.accept(this);
         return null;
     }
 
     @Override
     public String visit(ConditionalStmt conditionalStmt) {
-        //todo
+        String elseLabel = newLabel();
+        String afterLabel = newLabel();
+        addCommand("; If statement " + conditionalStmt.getLine());
+        addCommand(conditionalStmt.getCondition().accept(this));
+        addCommand("ifeq " + elseLabel);
+        conditionalStmt.getThenBody().accept(this);
+        addCommand("goto " + afterLabel);
+        addCommand(elseLabel + ":");
+        if (conditionalStmt.getElseBody() != null)
+            conditionalStmt.getElseBody().accept(this);
+        addCommand(afterLabel + ":");
         return null;
     }
 
@@ -223,7 +251,20 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ReturnStmt returnStmt) {
-        //todo
+        Type type = returnStmt.getReturnedExpr().accept(expressionTypeChecker);
+        if(type instanceof VoidType) {
+            addCommand("return");
+        }
+        else {
+            addCommand(returnStmt.getReturnedExpr().accept(this));
+            if (type instanceof IntType) {
+                addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
+            }
+            else if (type instanceof BoolType) {
+                addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
+            }
+            addCommand("areturn");
+        }
         return null;
     }
 
@@ -313,13 +354,10 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(BoolValue boolValue) {
-        String commands = "";
-        commands += "ldc ";
         if (boolValue.getConstant())
-            commands += "1";
+            return  "ldc 1";
         else
-            commands += "0";
-        return commands;
+            return "ldc 0";
     }
 
     @Override
