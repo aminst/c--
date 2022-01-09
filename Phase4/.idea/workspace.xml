@@ -2,9 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/output/Fptr.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/List.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/Order.j" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/ProductCatalog.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/ProductCatalog.j" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.j" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/a/Main.j" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/a/jasmin.jar" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/samples/sample.cmm" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.cmm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
     </list>
@@ -20,12 +28,15 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="23Sbn4bwmG6IPBHdfLDwOy5GSQA" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -72,12 +83,15 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java</url>
-          <line>65</line>
+          <line>72</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

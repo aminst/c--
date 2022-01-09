@@ -1,5 +1,18 @@
+struct ProductCatalog begin
+    int id
+    int price
+end
+
 main() begin
- int i = 1
+ int i;
+ bool b = true;
+ if (b) begin
+    i = i + 1
+    end
+ else begin
+    i = i + 2
+ end
+ display(i)
 end
 
 
