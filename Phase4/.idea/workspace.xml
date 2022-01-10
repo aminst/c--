@@ -4,17 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="">
+    <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="Add do while and while">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/CmmCompiler.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/CmmCompiler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Fptr.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/List.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.j" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Order.j" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.j" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/samples/sample.cmm" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.cmm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/CmmCompiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/CmmCompiler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -76,8 +73,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1641730641685</updated>
-      <workItem from="1641824634664" duration="3644000" />
+      <workItem from="1641824634664" duration="4209000" />
     </task>
+    <task id="LOCAL-00001" summary="Add do while and while">
+      <created>1641828306061</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1641828306061</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -96,5 +101,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Add do while and while" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add do while and while" />
   </component>
 </project>

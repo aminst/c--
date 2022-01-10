@@ -236,7 +236,21 @@ public class  CodeGenerator extends Visitor<String> {
             SymbolTable.push(functionSymbolTableItem.getFunctionSymbolTable());
         }catch (ItemNotFoundException e){//unreachable
         }
-
+        lastSlot = 0;
+        lastLabel = 0;
+        currentFunction = functionDeclaration;
+        String commands = ".method public ";
+        commands += functionDeclaration.getFunctionName().getName() + "(";
+        for (VariableDeclaration arg : functionDeclaration.getArgs()){
+            commands += makeTypeSignature(arg.getVarType());
+        }
+        commands += ")";
+        commands += makeTypeSignature(functionDeclaration.getReturnType());
+        addCommand(commands);
+        addCommand(".limit stack 128");
+        addCommand(".limit locals 128");
+        functionDeclaration.getBody().accept(this);
+        addCommand(".end method");
         return null;
     }
 

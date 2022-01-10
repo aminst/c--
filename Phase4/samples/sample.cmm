@@ -1,14 +1,9 @@
-struct ProductCatalog begin
-    int id
-    int price
+int f(int a, int b) begin
+    return a + b
 end
 
 main() begin
  int i;
- do begin
-   i = i + 1
-   display(i)
- end while i > 10
 end
 
 
