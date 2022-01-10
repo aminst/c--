@@ -5,14 +5,10 @@ end
 
 main() begin
  int i;
- bool b = true;
- if (b) begin
-    i = i + 1
-    end
- else begin
-    i = i + 2
- end
- display(i)
+ do begin
+   i = i + 1
+   display(i)
+ end while i > 10
 end
 
 

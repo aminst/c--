@@ -8,13 +8,7 @@
 		ldc 0
 		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
 		astore 1
-		ldc 0
-		invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;
-		astore 2
-		; If statement 14
-		aload 2
-		invokevirtual java/lang/Boolean/booleanValue()Z
-		ifeq Label_0
+	Label_0:
 		;Assign Statement
 		aload 1
 		invokevirtual java/lang/Integer/intValue()I
@@ -24,22 +18,21 @@
 		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
 		astore 1
 		pop
-		goto Label_1
-	Label_0:
-		;Assign Statement
-		aload 1
-		invokevirtual java/lang/Integer/intValue()I
-		ldc 2
-		iadd
-		dup ; keep value on stack
-		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
-		astore 1
-		pop
-	Label_1:
 		getstatic java/lang/System/out Ljava/io/PrintStream;
 		aload 1
 		invokevirtual java/lang/Integer/intValue()I
 		invokevirtual java/io/PrintStream/println(I)V
+		aload 1
+		invokevirtual java/lang/Integer/intValue()I
+		ldc 10
+		if_icmpgt Label_2 ; binary gt
+		ldc 0
+		goto Label_3
+		Label_2:
+		ldc 1
+		Label_3:
+		ifne Label_0
+	Label_1:
 		return
 .end method
 .method public static main([Ljava/lang/String;)V

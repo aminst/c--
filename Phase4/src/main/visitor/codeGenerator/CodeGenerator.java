@@ -236,7 +236,7 @@ public class  CodeGenerator extends Visitor<String> {
             SymbolTable.push(functionSymbolTableItem.getFunctionSymbolTable());
         }catch (ItemNotFoundException e){//unreachable
         }
-        //todo
+
         return null;
     }
 
@@ -277,12 +277,13 @@ public class  CodeGenerator extends Visitor<String> {
             return null;
         }
         if (varType instanceof IntType) {
-            addCommand("ldc 0");
+            addCommand("ldc 0"); // TODO: fix if default value
             addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
         }
         else if (varType instanceof BoolType) {
-            addCommand("ldc 0");
+            addCommand("ldc 0"); // TODO: fix if default value
             addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
+
         }
         else if (varType instanceof ListType) {
             // dont know
@@ -339,7 +340,10 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(FunctionCallStmt functionCallStmt) {
-        //todo
+        expressionTypeChecker.setInFunctionCallStmt(true);
+        functionCallStmt.getFunctionCall().accept(this);
+        expressionTypeChecker.setInFunctionCallStmt(false);
+        addCommand("pop");
         return null;
     }
 
@@ -379,7 +383,25 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(LoopStmt loopStmt) {
-        //todo
+        if (!loopStmt.getIsDoWhile()) {
+            String startLabel = newLabel();
+            String endLabel = newLabel();
+            addCommand(startLabel + ":");
+            addCommand(loopStmt.getCondition().accept(this));
+            addCommand("ifeq " + endLabel);
+            loopStmt.getBody().accept(this);
+            addCommand("goto " + startLabel);
+            addCommand(endLabel + ":");
+        }
+        else {
+            String startLabel = newLabel();
+            String endLabel = newLabel();
+            addCommand(startLabel + ":");
+            loopStmt.getBody().accept(this);
+            addCommand(loopStmt.getCondition().accept(this));
+            addCommand("ifne " + startLabel);
+            addCommand(endLabel + ":");
+        }
         return null;
     }
 
