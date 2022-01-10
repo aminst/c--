@@ -3,7 +3,7 @@ int f(int a, int b) begin
 end
 
 main() begin
- int i;
+ list # int i
 end
 
 

@@ -203,6 +203,7 @@ public class  CodeGenerator extends Visitor<String> {
     public String visit(StructDeclaration structDeclaration) {
         lastSlot = 0;
         lastLabel = 0;
+        slot.clear();
         isStruct = true;
         currStruct = structDeclaration;
         try{
@@ -238,6 +239,7 @@ public class  CodeGenerator extends Visitor<String> {
         }
         lastSlot = 0;
         lastLabel = 0;
+        slot.clear();
         currentFunction = functionDeclaration;
         String commands = ".method public ";
         commands += functionDeclaration.getFunctionName().getName() + "(";
@@ -282,6 +284,39 @@ public class  CodeGenerator extends Visitor<String> {
         return null;
     }
 
+    private void varDecHelper(Type type) {
+        if (type instanceof IntType) {
+            addCommand("ldc 0");
+            addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
+        }
+        else if (type instanceof BoolType) {
+            addCommand("ldc 0");
+            addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
+        }
+        else if (type instanceof ListType) {
+            ListType listType = (ListType) type;
+            addCommand("new List");
+            addCommand("dup");
+            addCommand("new java/util/ArrayList");
+            addCommand("dup");
+            addCommand("invokespecial java/util/ArrayList/<init>()V");
+            addCommand("dup");
+            varDecHelper(listType.getType());
+            addCommand("invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z");
+            addCommand("pop");
+            addCommand("invokespecial List/<init>(Ljava/util/ArrayList;)V");
+        }
+        else if (type instanceof FptrType) {
+            addCommand("aconst_null");
+        }
+        else if (type instanceof StructType) {
+            StructType structType = (StructType) type;
+            addCommand("new " + structType.getStructName());
+            addCommand("dup");
+            addCommand("invokespecial " + structType.getStructName() + "/<init>()V");
+        }
+    }
+
     @Override
     public String visit(VariableDeclaration variableDeclaration) {
         int slot = slotOf(variableDeclaration.getVarName().getName());
@@ -290,26 +325,7 @@ public class  CodeGenerator extends Visitor<String> {
             addCommand(".field " + variableDeclaration.getVarName().getName() + " " + makeTypeSignature(varType));
             return null;
         }
-        if (varType instanceof IntType) {
-            addCommand("ldc 0"); // TODO: fix if default value
-            addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
-        }
-        else if (varType instanceof BoolType) {
-            addCommand("ldc 0"); // TODO: fix if default value
-            addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
-
-        }
-        else if (varType instanceof ListType) {
-            // dont know
-            return null;
-        }
-        else if (varType instanceof FptrType) {
-            addCommand("aconst_null");
-        }
-        else if (varType instanceof StructType) {
-            // dont know
-            return null;
-        }
+        varDecHelper(varType);
         addCommand("astore " + slot);
         return null;
     }
@@ -355,7 +371,7 @@ public class  CodeGenerator extends Visitor<String> {
     @Override
     public String visit(FunctionCallStmt functionCallStmt) {
         expressionTypeChecker.setInFunctionCallStmt(true);
-        functionCallStmt.getFunctionCall().accept(this);
+        addCommand(functionCallStmt.getFunctionCall().accept(this));
         expressionTypeChecker.setInFunctionCallStmt(false);
         addCommand("pop");
         return null;
@@ -611,7 +627,26 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(FunctionCall functionCall){
-        //todo
+//        String commands = "";
+//        commands += functionCall.getInstance().accept(this);
+//        commands += "\n" + "new java/util/ArrayList";
+//        commands += "\n" + "dup";
+//        commands += "\n" + "invokespecial java/util/ArrayList/<init>()V";
+//        for (Expression expression : functionCall.getArgs()) {
+//            commands += "\n" + "dup";
+//            commands += "\n" + expression.accept(this);
+//            String castCmd = castToPrimitive(expression.accept(expressionTypeChecker));
+//            if (castCmd != null)
+//                commands += "\n" + castCmd;
+//            commands += "\n" + "invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z";
+//            commands += "\n" + "pop";
+//        }
+//        commands += "\n" + "invokevirtual Fptr/invoke(Ljava/util/ArrayList;)Ljava/lang/Object;";
+//        Type type = functionCall.accept(expressionTypeChecker);
+//        String castCmd = castToPrimitive(type);
+//        if (castCmd != null)
+//            commands += "\n" + castCmd;
+//        return commands;
         return null;
     }
 
