@@ -1,11 +1,11 @@
-int f(int a, int b) begin
-    return a + b
+struct ProductCatalog begin
+    int id
+    int price
 end
 
 main() begin
- list #int i
- append(i,1)
- display(i[0])
+    struct ProductCatalog p
+    display(p.id)
 end
 
 

@@ -14,6 +14,7 @@ import main.symbolTable.*;
 import main.symbolTable.exceptions.*;
 import main.symbolTable.items.FunctionSymbolTableItem;
 import main.symbolTable.items.StructSymbolTableItem;
+import main.symbolTable.items.VariableSymbolTableItem;
 import main.visitor.Visitor;
 import main.visitor.type.ExpressionTypeChecker;
 import java.io.*;
@@ -307,9 +308,9 @@ public class  CodeGenerator extends Visitor<String> {
         }
         else if (type instanceof StructType) {
             StructType structType = (StructType) type;
-            addCommand("new " + structType.getStructName());
+            addCommand("new " + structType.getStructName().getName());
             addCommand("dup");
-            addCommand("invokespecial " + structType.getStructName() + "/<init>()V");
+            addCommand("invokespecial " + structType.getStructName().getName() + "/<init>()V");
         }
     }
 
@@ -602,8 +603,23 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(StructAccess structAccess){
-        //todo
-        return null;
+        String commands = "";
+        Type type = structAccess.getInstance().accept(expressionTypeChecker);
+        String memberName = structAccess.getElement().getName();
+        StructType st = (StructType) type;
+        try {
+            SymbolTable structSymbolTable = ((StructSymbolTableItem) SymbolTable.root.getItem(StructSymbolTableItem.START_KEY + st.getStructName().getName())).getStructSymbolTable();
+            try {
+                structSymbolTable.getItem(VariableSymbolTableItem.START_KEY + memberName);
+                commands += structAccess.getInstance().accept(this);
+                Type memberType = structAccess.accept(expressionTypeChecker);
+                commands += "\n" + "getfield " + st.getStructName().getName() + "/" + memberName + " " + makeTypeSignature(memberType);
+                String castCmd = castToPrimitive(memberType);
+                if (castCmd != null)
+                    commands += "\n" + castCmd;
+            } catch (ItemNotFoundException ex2) {}
+        } catch (ItemNotFoundException ex) {}
+        return commands;
     }
 
     @Override
