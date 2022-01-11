@@ -706,7 +706,6 @@ public class  CodeGenerator extends Visitor<String> {
         String commands = "";
         commands += listAppend.getListArg().accept(this);
         commands += "\n" + listAppend.getElementArg().accept(this);
-//        commands += "\n" + "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
         String cstCmd = castToNonPrimitive(listAppend.getListArg().accept(expressionTypeChecker));
         if (cstCmd != null)
             commands += "\n" + cstCmd;
