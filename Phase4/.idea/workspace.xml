@@ -4,14 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="Add listAccessByIndex">
-      <change afterPath="$PROJECT_DIR$/output/ProductCatalog.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/ProductCatalog.j" afterDir="false" />
+    <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="Add structAccess">
+      <change afterPath="$PROJECT_DIR$/output/Order.j" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/Fptr.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/List.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.j" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/samples/sample.cmm" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.cmm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -73,7 +74,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1641730641685</updated>
-      <workItem from="1641824634664" duration="24375000" />
+      <workItem from="1641824634664" duration="24922000" />
     </task>
     <task id="LOCAL-00001" summary="Add do while and while">
       <created>1641828306061</created>
@@ -124,7 +125,14 @@
       <option name="project" value="LOCAL" />
       <updated>1641886267086</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Add structAccess">
+      <created>1641887232461</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1641887232461</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,6 +158,7 @@
     <MESSAGE value="Add list and list size" />
     <MESSAGE value="Add list append" />
     <MESSAGE value="Add listAccessByIndex" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add listAccessByIndex" />
+    <MESSAGE value="Add structAccess" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add structAccess" />
   </component>
 </project>
