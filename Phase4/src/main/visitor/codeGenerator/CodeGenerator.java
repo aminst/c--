@@ -403,12 +403,18 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ReturnStmt returnStmt) {
+        if (returnStmt.getReturnedExpr() == null) {
+            addCommand("return");
+            return null;
+        }
         Type type = returnStmt.getReturnedExpr().accept(expressionTypeChecker);
         if(type instanceof VoidType) {
             addCommand("return");
         }
         else {
-            addCommand(returnStmt.getReturnedExpr().accept(this));
+            String returnCmd = returnStmt.getReturnedExpr().accept(this);
+            if (returnCmd != null)
+                addCommand(returnCmd);
             if (type instanceof IntType) {
                 addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
             }
@@ -671,7 +677,9 @@ public class  CodeGenerator extends Visitor<String> {
     @Override
     public String visit(FunctionCall functionCall){
         String commands = "";
-        functionCall.getInstance().accept(this);
+        String cmd = functionCall.getInstance().accept(this);
+        if (cmd != null)
+            commands += cmd;
         commands += "\n" + "new java/util/ArrayList";
         commands += "\n" + "dup";
         commands += "\n" + "invokespecial java/util/ArrayList/<init>()V";
@@ -706,7 +714,7 @@ public class  CodeGenerator extends Visitor<String> {
         String commands = "";
         commands += listAppend.getListArg().accept(this);
         commands += "\n" + listAppend.getElementArg().accept(this);
-        String cstCmd = castToNonPrimitive(listAppend.getListArg().accept(expressionTypeChecker));
+        String cstCmd = castToNonPrimitive(listAppend.getElementArg().accept(expressionTypeChecker));
         if (cstCmd != null)
             commands += "\n" + cstCmd;
         commands += "\n" + "invokevirtual List/addElement(Ljava/lang/Object;)V";
