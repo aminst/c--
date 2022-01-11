@@ -584,9 +584,8 @@ public class  CodeGenerator extends Visitor<String> {
 
             }
             else if(binaryExpression.getFirstOperand() instanceof StructAccess) {
-                // a.b
                 Expression instance = ((StructAccess) binaryExpression.getFirstOperand()).getInstance();
-                String memberName = ((StructAccess) binaryExpression.getSecondOperand()).getInstance().toString();
+                String memberName = ((StructAccess) binaryExpression.getFirstOperand()).getElement().getName();
                 Type instanceType = instance.accept(expressionTypeChecker);
                 commands += instance.accept(this);
                 commands += "\ndup ; to getfield for putting back on stack";
@@ -707,7 +706,10 @@ public class  CodeGenerator extends Visitor<String> {
         String commands = "";
         commands += listAppend.getListArg().accept(this);
         commands += "\n" + listAppend.getElementArg().accept(this);
-        commands += "\n" + "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
+//        commands += "\n" + "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
+        String cstCmd = castToNonPrimitive(listAppend.getListArg().accept(expressionTypeChecker));
+        if (cstCmd != null)
+            commands += "\n" + cstCmd;
         commands += "\n" + "invokevirtual List/addElement(Ljava/lang/Object;)V";
         return commands;
     }
