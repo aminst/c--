@@ -609,6 +609,15 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(Identifier identifier){
+        try {
+            SymbolTable.root.getItem(FunctionSymbolTableItem.START_KEY+identifier.getName());
+            addCommand("new Fptr");
+            addCommand("dup");
+            addCommand("aload_0");
+            addCommand("ldc \"" + identifier.getName() + "\"");
+            addCommand("invokespecial Fptr/<init>(Ljava/lang/Object;Ljava/lang/String;)V");
+            return null;
+        } catch (ItemNotFoundException ex) {}
         String commands = "";
         int slot = slotOf(identifier.getName());
         commands += "aload " + String.valueOf(slot);
@@ -627,27 +636,27 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(FunctionCall functionCall){
-//        String commands = "";
-//        commands += functionCall.getInstance().accept(this);
-//        commands += "\n" + "new java/util/ArrayList";
-//        commands += "\n" + "dup";
-//        commands += "\n" + "invokespecial java/util/ArrayList/<init>()V";
-//        for (Expression expression : functionCall.getArgs()) {
-//            commands += "\n" + "dup";
-//            commands += "\n" + expression.accept(this);
-//            String castCmd = castToPrimitive(expression.accept(expressionTypeChecker));
-//            if (castCmd != null)
-//                commands += "\n" + castCmd;
-//            commands += "\n" + "invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z";
-//            commands += "\n" + "pop";
-//        }
-//        commands += "\n" + "invokevirtual Fptr/invoke(Ljava/util/ArrayList;)Ljava/lang/Object;";
-//        Type type = functionCall.accept(expressionTypeChecker);
-//        String castCmd = castToPrimitive(type);
-//        if (castCmd != null)
-//            commands += "\n" + castCmd;
-//        return commands;
-        return null;
+        String commands = "";
+        functionCall.getInstance().accept(this);
+        commands += "\n" + "new java/util/ArrayList";
+        commands += "\n" + "dup";
+        commands += "\n" + "invokespecial java/util/ArrayList/<init>()V";
+        for (Expression expression : functionCall.getArgs()) {
+            commands += "\n" + "dup";
+            commands += "\n" + expression.accept(this);
+            String castCmd = castToNonPrimitive(expression.accept(expressionTypeChecker));
+            if (castCmd != null)
+                commands += "\n" + castCmd;
+            commands += "\n" + "invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z";
+            commands += "\n" + "pop";
+        }
+        commands += "\n" + "invokevirtual Fptr/invoke(Ljava/util/ArrayList;)Ljava/lang/Object;";
+        Type type = functionCall.accept(expressionTypeChecker);
+        commands += "\n" + "checkcast " + checkcastType(type);
+        String castCmd = castToPrimitive(type);
+        if (castCmd != null)
+            commands += "\n" + castCmd;
+        return commands;
     }
 
     @Override

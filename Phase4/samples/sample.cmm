@@ -3,7 +3,7 @@ int f(int a, int b) begin
 end
 
 main() begin
- list # int i
+ display(f(1, 2))
 end
 
 
