@@ -3,15 +3,11 @@ struct ProductCatalog begin
     int price
 end
 
-main() begin
-    struct ProductCatalog p
-    display(p.id)
+struct Order begin
+    int quantity
+    struct ProductCatalog product
 end
 
-
-
-
-
-
-
-
+main() begin
+    int i
+end

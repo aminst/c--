@@ -29,7 +29,7 @@ public class  CodeGenerator extends Visitor<String> {
     private boolean isMain = false;
     private boolean isStruct = false;
     private final Map<String, Integer> slot = new HashMap<>();
-    private final Map<String, String> struct_constructor = new HashMap<>();
+    private final Map<String, Type> struct_constructor = new HashMap<>();
 
     private void copyFile(String toBeCopied, String toBePasted) {
         try {
@@ -165,6 +165,8 @@ public class  CodeGenerator extends Visitor<String> {
             return "LList;";
         else if (t instanceof FptrType)
             return "LFptr;";
+        else if (t instanceof StructType)
+            return "L" + ((StructType) t).getStructName().getName() + ";";
         else if (t instanceof VoidType)
             return "V";
         return null;
@@ -179,6 +181,8 @@ public class  CodeGenerator extends Visitor<String> {
             return "List";
         else if (t instanceof FptrType)
             return "Fptr";
+        else if (t instanceof StructType)
+            return ((StructType) t).getStructName().getName() + ";";
         else if (t instanceof VoidType)
             return "V";
         return null;
@@ -222,11 +226,10 @@ public class  CodeGenerator extends Visitor<String> {
         addCommand(".limit locals 128");
         addCommand("aload_0");
         addCommand("invokespecial java/lang/Object/<init>()V");
-        for (Map.Entry<String,String> entry : struct_constructor.entrySet()) {
+        for (Map.Entry<String,Type> entry : struct_constructor.entrySet()) {
             addCommand("aload_0");
-            addCommand("ldc 0");
-            addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
-            String help_command = "putfield " + structDeclaration.getStructName().getName() + "/" + entry.getKey() + " " + entry.getValue();
+            varDecHelper(entry.getValue());
+            String help_command = "putfield " + structDeclaration.getStructName().getName() + "/" + entry.getKey() + " " + makeTypeSignature(entry.getValue());
             addCommand(help_command);
         }
         addCommand("return");
@@ -323,7 +326,7 @@ public class  CodeGenerator extends Visitor<String> {
         Type varType = variableDeclaration.getVarType();
         if(isStruct) {
             addCommand(".field " + variableDeclaration.getVarName().getName() + " " + makeTypeSignature(varType));
-            struct_constructor.put(variableDeclaration.getVarName().getName(), makeTypeSignature(varType));
+            struct_constructor.put(variableDeclaration.getVarName().getName(), varType);
             return null;
         }
         varDecHelper(varType);
