@@ -16,6 +16,13 @@
 		ldc 1
 		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
 		invokevirtual List/addElement(Ljava/lang/Object;)V
+		getstatic java/lang/System/out Ljava/io/PrintStream;
+		aload 1
+		ldc 0
+		invokevirtual List/getElement(I)Ljava/lang/Object;
+		checkcast java/lang/Integer
+		invokevirtual java/lang/Integer/intValue()I
+		invokevirtual java/io/PrintStream/println(I)V
 		return
 .end method
 .method public static main([Ljava/lang/String;)V

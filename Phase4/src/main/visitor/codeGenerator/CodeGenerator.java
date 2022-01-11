@@ -629,8 +629,18 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ListAccessByIndex listAccessByIndex){
-        //todo
-        return null;
+        String commands = "";
+        commands += listAccessByIndex.getInstance().accept(this);
+        commands += "\n" + listAccessByIndex.getIndex().accept(this);
+        commands += "\n" + "invokevirtual List/getElement(I)Ljava/lang/Object;";
+        Type type = listAccessByIndex.getInstance().accept(expressionTypeChecker);
+        ListType listType = (ListType) type;
+        Type memberType = listType.getType();
+        commands += "\n" + "checkcast " + checkcastType(memberType);
+        String castCmd = castToPrimitive(memberType);
+        if (castCmd != null)
+            commands += "\n" + castCmd;
+        return commands;
     }
 
     @Override
