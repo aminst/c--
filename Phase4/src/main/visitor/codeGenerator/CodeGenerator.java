@@ -115,17 +115,22 @@ public class  CodeGenerator extends Visitor<String> {
             }
             return slot.get(identifier);
         }
+        if (lastSlot == 0) {
+            for (VariableDeclaration arg : currentFunction.getArgs()) {
+                lastSlot++;
+                slot.put(arg.getVarName().getName(), lastSlot);
+            }
+        }
+
         if (identifier.equals("")) {
-            if (lastSlot == 0)
-                lastSlot = currentFunction.getArgs().size();
             lastSlot++;
             return lastSlot;
         }
-
         if (!slot.containsKey(identifier)) {
             lastSlot++;
             slot.put(identifier,lastSlot);
         }
+
         return slot.get(identifier);
     }
 
@@ -260,8 +265,6 @@ public class  CodeGenerator extends Visitor<String> {
         addCommand(commands);
         addCommand(".limit stack 128");
         addCommand(".limit locals 128");
-        for (VariableDeclaration arg : functionDeclaration.getArgs())
-            arg.accept(this);
         functionDeclaration.getBody().accept(this);
         addCommand(".end method");
         return null;

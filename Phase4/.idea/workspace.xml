@@ -9,6 +9,10 @@
       <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.j" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/Order.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/Order.j" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.j" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/samples/sample.cmm" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.cmm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
     </list>
@@ -165,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1641901903408</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Add changes">
+      <created>1641907537786</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1641907537786</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,16 +204,5 @@
     <MESSAGE value="Add structAccess" />
     <MESSAGE value="Add changes" />
     <option name="LAST_COMMIT_MESSAGE" value="Add changes" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java</url>
-          <line>347</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

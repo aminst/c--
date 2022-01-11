@@ -263,13 +263,6 @@
 .method public createOrder(LProductCatalog;Ljava/lang/Integer;)LOrder;
 .limit stack 128
 .limit locals 128
-		new ProductCatalog
-		dup
-		invokespecial ProductCatalog/<init>()V
-		astore 1
-		ldc 0
-		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
-		astore 2
 		new Order
 		dup
 		invokespecial Order/<init>()V
@@ -299,13 +292,6 @@
 .method public getSum(LList;)Ljava/lang/Integer;
 .limit stack 128
 .limit locals 128
-		new List
-		dup
-		new java/util/ArrayList
-		dup
-		invokespecial java/util/ArrayList/<init>()V
-		invokespecial List/<init>(Ljava/util/ArrayList;)V
-		astore 1
 		ldc 0
 		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
 		astore 2
