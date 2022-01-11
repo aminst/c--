@@ -468,21 +468,29 @@ public class  CodeGenerator extends Visitor<String> {
         BinaryOperator operator = binaryExpression.getBinaryOperator();
         String commands = "";
 
-        commands += binaryExpression.getFirstOperand().accept(this);
-        commands += "\n" + binaryExpression.getSecondOperand().accept(this);
         if (operator == BinaryOperator.add) {
+            commands += binaryExpression.getFirstOperand().accept(this);
+            commands += "\n" + binaryExpression.getSecondOperand().accept(this);
             commands += "\niadd";
         }
         else if (operator == BinaryOperator.sub) {
+            commands += binaryExpression.getFirstOperand().accept(this);
+            commands += "\n" + binaryExpression.getSecondOperand().accept(this);
             commands += "\nisub";
         }
         else if (operator == BinaryOperator.mult) {
+            commands += binaryExpression.getFirstOperand().accept(this);
+            commands += "\n" + binaryExpression.getSecondOperand().accept(this);
             commands += "\nimul";
         }
         else if (operator == BinaryOperator.div) {
+            commands += binaryExpression.getFirstOperand().accept(this);
+            commands += "\n" + binaryExpression.getSecondOperand().accept(this);
             commands += "\nidiv";
         }
         else if((operator == BinaryOperator.gt) || (operator == BinaryOperator.lt)) {
+            commands += binaryExpression.getFirstOperand().accept(this);
+            commands += "\n" + binaryExpression.getSecondOperand().accept(this);
             String trueLabel = newLabel();
             String afterLabel = newLabel();
             if (operator == BinaryOperator.gt)
@@ -496,6 +504,8 @@ public class  CodeGenerator extends Visitor<String> {
             commands += "\n" + afterLabel + ":";
         }
         else if((operator == BinaryOperator.eq) ) {
+            commands += binaryExpression.getFirstOperand().accept(this);
+            commands += "\n" + binaryExpression.getSecondOperand().accept(this);
             String trueLabel = newLabel();
             String afterLabel = newLabel();
             String cmpCommand = "if_a";
@@ -556,32 +566,23 @@ public class  CodeGenerator extends Visitor<String> {
             if(binaryExpression.getFirstOperand() instanceof Identifier) {
                 String name = ((Identifier) binaryExpression.getFirstOperand()).getName();
                 commands += secondOperandCommands;
-                commands += "\ndup ; keep value on stack"; // value must stay on stack
                 String castCmd = castToNonPrimitive(secondType);
                 if (castCmd != null)
                     commands += "\n" + castCmd;
                 commands += "\nastore " + slotOf(name);
+                commands += "\n" + binaryExpression.getFirstOperand().accept(this);
             }
             else if(binaryExpression.getFirstOperand() instanceof ListAccessByIndex) {
                 int tempSlot = slotOf("");
                 ListAccessByIndex listAccessByIndex = (ListAccessByIndex) binaryExpression.getFirstOperand();
                 commands += listAccessByIndex.getInstance().accept(this);
-                commands += "\ndup ; dup list for retrieving from list to put value on stack after assign";
                 commands += "\n" + listAccessByIndex.getIndex().accept(this);
-                commands += "\ndup ; keeping index so we can retrieve value from list";
-                commands += "\nistore " + tempSlot;
                 commands += "\n" + secondOperandCommands;
                 String castCmd = castToNonPrimitive(secondType);
                 if (castCmd != null)
                     commands += "\n" + castCmd;
                 commands += "\n" + "invokevirtual List/setElement(ILjava/lang/Object;)V";
-                commands += "\niload " + tempSlot;
-                commands += "\n" + "invokevirtual List/getElement(I)Ljava/lang/Object;";
-                commands += "\ncheckcast " + checkcastType(secondType);
-                castCmd = castToPrimitive(secondType);
-                if (castCmd != null)
-                    commands += "\n" + castCmd;
-
+                commands += "\n" + binaryExpression.getFirstOperand().accept(this);
             }
             else if(binaryExpression.getFirstOperand() instanceof StructAccess) {
                 Expression instance = ((StructAccess) binaryExpression.getFirstOperand()).getInstance();
@@ -595,11 +596,7 @@ public class  CodeGenerator extends Visitor<String> {
                     commands += "\n" + castCmd;
                 commands += "\nputfield " + ((StructType) instanceType).getStructName().getName()
                         + "/" + memberName + " " + makeTypeSignature(secondType);
-                commands += "\ngetfield " + ((StructType) instanceType).getStructName().getName()
-                        + "/" + memberName + " " + makeTypeSignature(secondType) + " ; for putting assign on stack ";
-                castCmd = castToPrimitive(secondType);
-                if (castCmd != null)
-                    commands += "\n" + castCmd;
+                commands += "\n" + binaryExpression.getFirstOperand().accept(this);
             }
         }
         return commands;
