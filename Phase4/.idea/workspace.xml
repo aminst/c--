@@ -5,14 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="Add changes">
+      <change afterPath="$PROJECT_DIR$/output/T.j" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/Fptr.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/List.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.j" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Order.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Order.j" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.j" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/samples/sample.cmm" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.cmm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
     </list>
@@ -183,7 +182,14 @@
       <option name="project" value="LOCAL" />
       <updated>1641909398709</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Add changes">
+      <created>1641913052885</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1641913052885</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -233,7 +233,7 @@ public class  CodeGenerator extends Visitor<String> {
         addCommand("invokespecial java/lang/Object/<init>()V");
         for (Map.Entry<String,Type> entry : struct_constructor.entrySet()) {
             addCommand("aload_0");
-            varDecHelper(entry.getValue());
+            varDecHelper(entry.getValue(), null);
             String help_command = "putfield " + structDeclaration.getStructName().getName() + "/" + entry.getKey() + " " + makeTypeSignature(entry.getValue());
             addCommand(help_command);
         }
@@ -297,31 +297,40 @@ public class  CodeGenerator extends Visitor<String> {
         return null;
     }
 
-    private void varDecHelper(Type type) {
+    private void varDecHelper(Type type, Expression defaultVal) {
+        if (defaultVal != null)
+            addCommand(defaultVal.accept(this));
         if (type instanceof IntType) {
-            addCommand("ldc 0");
+            if (defaultVal == null)
+                addCommand("ldc 0");
             addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
         }
         else if (type instanceof BoolType) {
-            addCommand("ldc 0");
+            if (defaultVal == null)
+                addCommand("ldc 0");
             addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
         }
         else if (type instanceof ListType) {
-            addCommand("new List");
-            addCommand("dup");
-            addCommand("new java/util/ArrayList");
-            addCommand("dup");
-            addCommand("invokespecial java/util/ArrayList/<init>()V");
+            if (defaultVal == null) {
+                addCommand("new List");
+                addCommand("dup");
+                addCommand("new java/util/ArrayList");
+                addCommand("dup");
+                addCommand("invokespecial java/util/ArrayList/<init>()V");
+            }
             addCommand("invokespecial List/<init>(Ljava/util/ArrayList;)V");
         }
         else if (type instanceof FptrType) {
-            addCommand("aconst_null");
+            if (defaultVal == null)
+                addCommand("aconst_null");
         }
         else if (type instanceof StructType) {
             StructType structType = (StructType) type;
-            addCommand("new " + structType.getStructName().getName());
-            addCommand("dup");
-            addCommand("invokespecial " + structType.getStructName().getName() + "/<init>()V");
+            if (defaultVal == null) {
+                addCommand("new " + structType.getStructName().getName());
+                addCommand("dup");
+                addCommand("invokespecial " + structType.getStructName().getName() + "/<init>()V");
+            }
         }
     }
 
@@ -334,7 +343,7 @@ public class  CodeGenerator extends Visitor<String> {
             struct_constructor.put(variableDeclaration.getVarName().getName(), varType);
             return null;
         }
-        varDecHelper(varType);
+        varDecHelper(varType, variableDeclaration.getDefaultValue());
         addCommand("astore " + slot);
         return null;
     }
