@@ -5,20 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/output/Order.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/Order.j" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/List.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/List.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/List.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/List.j" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.j" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/samples/sample.cmm" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample.cmm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/samples/sample1.cmm" beforeDir="false" afterPath="$PROJECT_DIR$/samples/sample1.cmm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utilities/codeGenerationUtilityClasses/List.j" beforeDir="false" afterPath="$PROJECT_DIR$/utilities/codeGenerationUtilityClasses/List.j" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utilities/codeGenerationUtilityClasses/List.java" beforeDir="false" afterPath="$PROJECT_DIR$/utilities/codeGenerationUtilityClasses/List.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Pull.Settings">
+    <option name="OPTIONS">
+      <set>
+        <option value="REBASE" />
+      </set>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />

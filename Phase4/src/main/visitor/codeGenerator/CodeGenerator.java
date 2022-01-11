@@ -182,7 +182,7 @@ public class  CodeGenerator extends Visitor<String> {
         else if (t instanceof FptrType)
             return "Fptr";
         else if (t instanceof StructType)
-            return ((StructType) t).getStructName().getName() + ";";
+            return ((StructType) t).getStructName().getName();
         else if (t instanceof VoidType)
             return "V";
         return null;
@@ -260,6 +260,8 @@ public class  CodeGenerator extends Visitor<String> {
         addCommand(commands);
         addCommand(".limit stack 128");
         addCommand(".limit locals 128");
+        for (VariableDeclaration arg : functionDeclaration.getArgs())
+            arg.accept(this);
         functionDeclaration.getBody().accept(this);
         addCommand(".end method");
         return null;
@@ -582,8 +584,9 @@ public class  CodeGenerator extends Visitor<String> {
 
             }
             else if(binaryExpression.getFirstOperand() instanceof StructAccess) {
+                // a.b
                 Expression instance = ((StructAccess) binaryExpression.getFirstOperand()).getInstance();
-                String memberName = ((StructAccess) binaryExpression.getFirstOperand()).getInstance().toString();
+                String memberName = ((StructAccess) binaryExpression.getSecondOperand()).getInstance().toString();
                 Type instanceType = instance.accept(expressionTypeChecker);
                 commands += instance.accept(this);
                 commands += "\ndup ; to getfield for putting back on stack";

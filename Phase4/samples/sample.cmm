@@ -8,6 +8,12 @@ struct Order begin
     struct ProductCatalog product
 end
 
+struct Order createOrder(struct ProductCatalog product, int quantity) begin
+    struct Order order
+    order.product = product
+    return order
+end
+
 main() begin
     int i
 end
