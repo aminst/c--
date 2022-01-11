@@ -5,29 +5,16 @@
 .limit locals 128
 		aload_0
 		invokespecial java/lang/Object/<init>()V
-		getstatic java/lang/System/out Ljava/io/PrintStream;
-		new Fptr
+		new List
 		dup
-		aload_0
-		ldc "f"
-		invokespecial Fptr/<init>(Ljava/lang/Object;Ljava/lang/String;)V
-		
 		new java/util/ArrayList
 		dup
 		invokespecial java/util/ArrayList/<init>()V
-		dup
-		ldc 1
-		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
-		invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z
-		pop
-		dup
-		ldc 2
-		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
-		invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z
-		pop
-		invokevirtual Fptr/invoke(Ljava/util/ArrayList;)Ljava/lang/Object;
-		checkcast java/lang/Integer
-		invokevirtual java/lang/Integer/intValue()I
+		invokespecial List/<init>(Ljava/util/ArrayList;)V
+		astore 1
+		getstatic java/lang/System/out Ljava/io/PrintStream;
+		aload 1
+		invokevirtual List/getSize()I
 		invokevirtual java/io/PrintStream/println(I)V
 		return
 .end method

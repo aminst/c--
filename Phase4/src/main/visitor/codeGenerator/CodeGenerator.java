@@ -300,10 +300,6 @@ public class  CodeGenerator extends Visitor<String> {
             addCommand("new java/util/ArrayList");
             addCommand("dup");
             addCommand("invokespecial java/util/ArrayList/<init>()V");
-            addCommand("dup");
-            varDecHelper(listType.getType());
-            addCommand("invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z");
-            addCommand("pop");
             addCommand("invokespecial List/<init>(Ljava/util/ArrayList;)V");
         }
         else if (type instanceof FptrType) {
@@ -450,7 +446,8 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ListSizeStmt listSizeStmt) {
-        //todo
+        addCommand(listSizeStmt.getListSizeExpr().accept(this));
+        addCommand("pop");
         return null;
     }
 
@@ -661,8 +658,10 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ListSize listSize){
-        //todo
-        return null;
+        String commands = "";
+        commands += listSize.getArg().accept(this);
+        commands += "\n" + "invokevirtual List/getSize()I";
+        return commands;
     }
 
     @Override
