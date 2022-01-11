@@ -24,13 +24,12 @@ public class  CodeGenerator extends Visitor<String> {
     private String outputPath;
     private FileWriter currentFile;
     private FunctionDeclaration currentFunction;
-    private MainDeclaration currMain;
-    private StructDeclaration currStruct;
     private int lastSlot = 0;
     private int lastLabel = 0;
     private boolean isMain = false;
     private boolean isStruct = false;
-    private Map<String, Integer> slot = new HashMap<String, Integer>();
+    private final Map<String, Integer> slot = new HashMap<>();
+    private final Map<String, String> struct_constructor = new HashMap<>();
 
     private void copyFile(String toBeCopied, String toBePasted) {
         try {
@@ -204,8 +203,8 @@ public class  CodeGenerator extends Visitor<String> {
         lastSlot = 0;
         lastLabel = 0;
         slot.clear();
+        struct_constructor.clear();
         isStruct = true;
-        currStruct = structDeclaration;
         try{
             String structKey = StructSymbolTableItem.START_KEY + structDeclaration.getStructName().getName();
             StructSymbolTableItem structSymbolTableItem = (StructSymbolTableItem)SymbolTable.root.getItem(structKey);
@@ -223,6 +222,13 @@ public class  CodeGenerator extends Visitor<String> {
         addCommand(".limit locals 128");
         addCommand("aload_0");
         addCommand("invokespecial java/lang/Object/<init>()V");
+        for (Map.Entry<String,String> entry : struct_constructor.entrySet()) {
+            addCommand("aload_0");
+            addCommand("ldc 0");
+            addCommand("invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;");
+            String help_command = "putfield " + structDeclaration.getStructName().getName() + "/" + entry.getKey() + " " + entry.getValue();
+            addCommand(help_command);
+        }
         addCommand("return");
         addCommand(".end method");
         isStruct = false;
@@ -267,7 +273,6 @@ public class  CodeGenerator extends Visitor<String> {
             SymbolTable.push(functionSymbolTableItem.getFunctionSymbolTable());
         }catch (ItemNotFoundException e){//unreachable
         }
-        currMain = mainDeclaration;
         isMain = true;
         addCommand(".class public Main");
         addCommand(".super java/lang/Object");
@@ -294,7 +299,6 @@ public class  CodeGenerator extends Visitor<String> {
             addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
         }
         else if (type instanceof ListType) {
-            ListType listType = (ListType) type;
             addCommand("new List");
             addCommand("dup");
             addCommand("new java/util/ArrayList");
@@ -319,6 +323,7 @@ public class  CodeGenerator extends Visitor<String> {
         Type varType = variableDeclaration.getVarType();
         if(isStruct) {
             addCommand(".field " + variableDeclaration.getVarName().getName() + " " + makeTypeSignature(varType));
+            struct_constructor.put(variableDeclaration.getVarName().getName(), makeTypeSignature(varType));
             return null;
         }
         varDecHelper(varType);
@@ -634,7 +639,7 @@ public class  CodeGenerator extends Visitor<String> {
         } catch (ItemNotFoundException ex) {}
         String commands = "";
         int slot = slotOf(identifier.getName());
-        commands += "aload " + String.valueOf(slot);
+        commands += "aload " + slot;
         Type type = identifier.accept(expressionTypeChecker);
         String castCmd = castToPrimitive(type);
         if (castCmd != null)
@@ -704,7 +709,7 @@ public class  CodeGenerator extends Visitor<String> {
     @Override
     public String visit(IntValue intValue) {
         String commands = "";
-        commands += "ldc " + String.valueOf(intValue.getConstant());
+        commands += "ldc " + intValue.getConstant();
         return commands;
     }
 

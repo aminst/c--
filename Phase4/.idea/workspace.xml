@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Main.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.j" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/Order.j" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/CmmCompiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/CmmCompiler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/ProductCatalog.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ProductCatalog.j" beforeDir="false" afterPath="$PROJECT_DIR$/output/ProductCatalog.j" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
