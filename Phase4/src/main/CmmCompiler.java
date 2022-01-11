@@ -39,14 +39,14 @@ public class CmmCompiler {
 
         System.out.println("Compilation successful");
 
-//        runJasminFiles();
+        runJasminFiles();
     }
 
     private void runJasminFiles() {
         try {
             System.out.println("\n-------------------Generating Class Files-------------------");
             File dir = new File("./output");
-            Process process = Runtime.getRuntime().exec("java -jar jasmin.jar *.j", null, dir);
+            Process process = Runtime.getRuntime().exec(new String[] { "sh", "-c", "java -jar jasmin.jar *.j" }, null, dir);
             printResults(process.getInputStream());
             printResults(process.getErrorStream());
             System.out.println("\n---------------------------Output---------------------------");
