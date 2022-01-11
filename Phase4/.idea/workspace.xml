@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="Add function call">
+    <list default="true" id="486cc642-f6a0-40e2-8610-66aa7055c50f" name="Changes" comment="Add list and list size">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Phase4/main/visitor/codeGenerator/CodeGenerator.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/output/Main.class" afterDir="false" />
@@ -71,7 +71,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1641730641685</updated>
-      <workItem from="1641824634664" duration="22067000" />
+      <workItem from="1641824634664" duration="22541000" />
     </task>
     <task id="LOCAL-00001" summary="Add do while and while">
       <created>1641828306061</created>
@@ -101,7 +101,14 @@
       <option name="project" value="LOCAL" />
       <updated>1641883588041</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Add list and list size">
+      <created>1641884922359</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1641884922359</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,6 +131,7 @@
     <MESSAGE value="Add function declaration" />
     <MESSAGE value="Add changes" />
     <MESSAGE value="Add function call" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add function call" />
+    <MESSAGE value="Add list and list size" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add list and list size" />
   </component>
 </project>

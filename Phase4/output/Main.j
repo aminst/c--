@@ -12,10 +12,10 @@
 		invokespecial java/util/ArrayList/<init>()V
 		invokespecial List/<init>(Ljava/util/ArrayList;)V
 		astore 1
-		getstatic java/lang/System/out Ljava/io/PrintStream;
 		aload 1
-		invokevirtual List/getSize()I
-		invokevirtual java/io/PrintStream/println(I)V
+		ldc 1
+		invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;
+		invokevirtual List/addElement(Ljava/lang/Object;)V
 		return
 .end method
 .method public static main([Ljava/lang/String;)V

@@ -440,7 +440,9 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ListAppendStmt listAppendStmt) {
-        //todo
+        expressionTypeChecker.setInFunctionCallStmt(true);
+        addCommand(listAppendStmt.getListAppendExpr().accept(this));
+        expressionTypeChecker.setInFunctionCallStmt(false);
         return null;
     }
 
@@ -666,8 +668,12 @@ public class  CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ListAppend listAppend) {
-        //todo
-        return null;
+        String commands = "";
+        commands += listAppend.getListArg().accept(this);
+        commands += "\n" + listAppend.getElementArg().accept(this);
+        commands += "\n" + "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
+        commands += "\n" + "invokevirtual List/addElement(Ljava/lang/Object;)V";
+        return commands;
     }
 
     @Override

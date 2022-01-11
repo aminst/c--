@@ -4,7 +4,7 @@ end
 
 main() begin
  list #int i
- display(size(i))
+ append(i,1)
 end
 
 
