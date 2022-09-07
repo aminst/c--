@@ -51,7 +51,7 @@ end while (a > 0)
 ```
 ## Implementation
 We did the development in four different phases:
-1. Grammer definition
+1. Grammar definition
 2. Name analysis
 3. Type analysis
 4. Bytecode translation
